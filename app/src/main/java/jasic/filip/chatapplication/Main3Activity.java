@@ -5,8 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.TextView;
+import android.widget.ImageView;
+import android.widget.ListView;
 
 public class Main3Activity extends AppCompatActivity {
 
@@ -14,10 +14,8 @@ public class Main3Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main3);
-        final Button logout=findViewById(R.id.logout_list);
-        final TextView friend1=findViewById(R.id.friend1);
-        final ImageButton friend1image=findViewById(R.id.image1);
 
+        final Button logout=findViewById(R.id.logout_list);
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -25,20 +23,14 @@ public class Main3Activity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        friend1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(Main3Activity.this,Main4Activity.class);
-                startActivity(intent);
-            }
-        });
+        ListView list= findViewById(R.id.list);
+        ContactAdapter adapter=new ContactAdapter(this);
+        adapter.addContact(new Contact(("" + getResources().getString(R.string.djordje).toString().charAt(0)),getString(R.string.djordje),getResources().getDrawable(R.drawable.sendbutton)));
+        adapter.addContact(new Contact(("" + getResources().getString(R.string.petar).toString().charAt(0)),getString(R.string.petar),getResources().getDrawable(R.drawable.sendbutton)));
+        adapter.addContact(new Contact(("" + getResources().getString(R.string.ivan).toString().charAt(0)),getString(R.string.ivan),getResources().getDrawable(R.drawable.sendbutton)));
+        adapter.addContact(new Contact(("" + getResources().getString(R.string.jovan).toString().charAt(0)),getString(R.string.jovan),getResources().getDrawable(R.drawable.sendbutton)));
+        adapter.addContact(new Contact(("" + getResources().getString(R.string.milos).toString().charAt(0)),getString(R.string.milos),getResources().getDrawable(R.drawable.sendbutton)));
+        list.setAdapter(adapter);
 
-        friend1image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(Main3Activity.this,Main4Activity.class);
-                startActivity(intent);
-            }
-        });
     }
 }

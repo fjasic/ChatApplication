@@ -20,6 +20,14 @@
     <string name="empty_message">empty message</string>
     <string name="send">send</string>
     <string name="logout">logout</string>
+    <string name="chatlist">my chat list</string>
+
+    <string name="petar">Petar Petrovic</string>
+    <string name="djordje">Djordje Djordjevic</string>
+    <string name="ivan">Ivan Ivanovic</string>
+    <string name="jovan">Jovan Jovanovic</string>
+    <string name="milos">Milos Milosevic</string>
+
     <string-array name="gender_spinner">
         <item>male</item>
         <item>female</item>

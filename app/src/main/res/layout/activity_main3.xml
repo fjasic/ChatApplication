@@ -13,24 +13,25 @@
         android:layout_alignParentTop="true"
         android:text="@string/logout" />
 
-    <ImageButton
-        android:id="@+id/image1"
-        android:layout_width="120dp"
-        android:layout_height="60dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="13dp"
-        android:layout_marginTop="31dp"
-        tools:ignore="ContentDescription" />
-
-
     <TextView
-        android:id="@+id/friend1"
+        android:id="@+id/chatlist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/image1"
-        android:layout_marginStart="24dp"
-        android:layout_toEndOf="@+id/image1"
-        android:text="@string/my_friend"
+        android:layout_alignBottom="@+id/logout_list"
+        android:layout_alignParentStart="true"
+        android:text="@string/chatlist"
         android:textSize="22sp" />
+
+    <ListView
+        android:id="@+id/list"
+        android:layout_width="wrap_content"
+        android:layout_height="451dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="2dp">
+
+    </ListView>
+
+
+
 </RelativeLayout>
