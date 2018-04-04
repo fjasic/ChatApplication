@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class Main4Activity extends AppCompatActivity {
@@ -17,6 +19,10 @@ public class Main4Activity extends AppCompatActivity {
         Log.d("4.","otvara 4. activity");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main4);
+
+        TextView contactName = findViewById(R.id.chatName);
+        Intent contacts_intent=getIntent();
+        contactName.setText(contacts_intent.getStringExtra("contact_name"));
 
         final Button send=findViewById(R.id.send_button);
         final Button logout=findViewById(R.id.logout_message);
@@ -29,7 +35,8 @@ public class Main4Activity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
+        final ListView listMessages=findViewById(R.id.listMessage);
+        final MessageAdapter adapterMessage=new MessageAdapter(this);
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -42,10 +49,26 @@ public class Main4Activity extends AppCompatActivity {
                     Toast toast = Toast.makeText(context, text, duration);
                     toast.show();
                     final EditText msg=findViewById(R.id.msg);
-                    msg.setText("");}
+
+                    Message message =new Message(msg.getText().toString(),"user");
+                    adapterMessage.addMessage(message);
+                    adapterMessage.notifyDataSetChanged();
+                    msg.setText("");
+
+                }
             }
         });
+        //dummy data
+
+        adapterMessage.addMessage(new Message("Bot is saying something","bot"));
+        adapterMessage.addMessage(new Message("user is saying something","user"));
+        adapterMessage.addMessage(new Message("Bot is saying something2","bot"));
+        adapterMessage.addMessage(new Message("user is saying something2","user"));
+
+        listMessages.setAdapter(adapterMessage);
+
     }
+
 
     private boolean validateMsg() {
         final EditText msg=findViewById(R.id.msg);

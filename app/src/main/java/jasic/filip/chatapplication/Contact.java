@@ -7,9 +7,13 @@ public class Contact {
     public Drawable mImage;
 
 
-    public Contact(String nameFirst,String name, Drawable drawable) {
+    Contact(String nameFirst, String name, Drawable drawable) {
         mNameFirst=nameFirst;
         mName = name;
         mImage = drawable;
+    }
+
+    public String getName(){
+        return mName;
     }
 }

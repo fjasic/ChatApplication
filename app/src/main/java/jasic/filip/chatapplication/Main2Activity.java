@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 public class Main2Activity extends AppCompatActivity {
     private DatePickerDialog.OnDateSetListener dateSetListener;
@@ -52,7 +53,7 @@ public class Main2Activity extends AppCompatActivity {
 
                 DatePickerDialog dialog = new DatePickerDialog(Main2Activity.this,android.R.style.Theme_Material_Dialog_MinWidth,dateSetListener,
                         year,month,day);
-                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialog.getDatePicker().setMaxDate(new Date().getTime());
                 dialog.show();
             }
