@@ -17,6 +17,7 @@ android:orientation="vertical"
         android:textColor="@color/textColor"
         android:gravity="center"
         android:id="@+id/nameFirst"
+        android:text="@string/sample_letter"
         />
 
     <TextView
@@ -26,6 +27,7 @@ android:orientation="vertical"
         android:layout_weight="1"
         android:gravity="center"
         android:id="@+id/name"
+        android:text="@string/sample_name"
         />
 
     <ImageView
@@ -34,6 +36,7 @@ android:orientation="vertical"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_gravity="center"
+        android:src="@drawable/sendbutton"
         />
 
 </LinearLayout>

@@ -1,4 +1,4 @@
-package jasic.filip.chatapplication;
+package jasic.filip.chatapplication.activities;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -14,16 +14,34 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 
+import jasic.filip.chatapplication.R;
+import jasic.filip.chatapplication.models.Contact;
+import jasic.filip.chatapplication.providers.ContactProvider;
+
 public class Main2Activity extends AppCompatActivity {
     private DatePickerDialog.OnDateSetListener dateSetListener;
+    ContactProvider contactProvider;
+    EditText username,password,firstname,lastname,email;
+    TextView displayDate;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+
+        username =  findViewById(R.id.register_username);
+        password = findViewById(R.id.register_password);
+        email=findViewById(R.id.johndoe);
+        firstname=findViewById(R.id.first_name);
+        lastname=findViewById(R.id.last_name);
+        displayDate=findViewById(R.id.birth_date);
+
+        contactProvider=new ContactProvider(this);
 
         Spinner spinner= findViewById(R.id.gender_spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -37,12 +55,20 @@ public class Main2Activity extends AppCompatActivity {
             public void onClick(View v) {
                 submitForm();
                 if(submitForm()){
-                    Intent intent=new Intent(Main2Activity.this,Main3Activity.class);
-                    startActivity(intent);
+                    if(contactProvider.getContact(username.getText().toString())==null){
+                        Contact contact=new Contact(0,username.getText().toString(),firstname.getText().toString(),
+                                lastname.getText().toString());
+                        contactProvider.insertContact(contact);
+                        Intent loginIntent=new Intent(getApplicationContext(),Main3Activity.class);
+                        loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(loginIntent);
+                    }else{
+                        Toast.makeText(getApplicationContext(),"Username already exist",Toast.LENGTH_LONG).show();
+                    }
+
                 }
             }
         });
-        final TextView displayDate=findViewById(R.id.birth_date);
         displayDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,8 +97,7 @@ public class Main2Activity extends AppCompatActivity {
     }
 
 
-    private boolean validateUsername() {
-        EditText username =  findViewById(R.id.register_username);
+    public boolean validateUsername() {
         if (username.getText().toString().trim().isEmpty()) {
             username.setError(getString(R.string.username_error));
             username.requestFocus();
@@ -83,8 +108,7 @@ public class Main2Activity extends AppCompatActivity {
 
     }
 
-    private boolean validatePassword() {
-        EditText password = findViewById(R.id.register_password);
+    public boolean validatePassword() {
         if (password.getText().toString().trim().length() < 6) {
             password.setError(getString(R.string.password_6_error));
             password.requestFocus();
@@ -95,8 +119,7 @@ public class Main2Activity extends AppCompatActivity {
 
     }
 
-    private boolean validateEmail() {
-        EditText email=findViewById(R.id.johndoe);
+    public boolean validateEmail() {
         if (email.getText().toString().trim().isEmpty()) {
             email.setError(getString(R.string.email_error));
             email.requestFocus();
@@ -107,15 +130,8 @@ public class Main2Activity extends AppCompatActivity {
 
     }
 
-    private boolean submitForm(){
-        if(!validateUsername()){
-            return false;
-        }
+    public boolean submitForm() {
+        return validateUsername() && validatePassword() && validateEmail();
 
-        if(!validatePassword()){
-            return false;
-        }
-
-        return validateEmail();
     }
 }

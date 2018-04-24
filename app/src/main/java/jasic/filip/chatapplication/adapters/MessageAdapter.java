@@ -1,4 +1,4 @@
-package jasic.filip.chatapplication;
+package jasic.filip.chatapplication.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -11,13 +11,16 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import jasic.filip.chatapplication.models.Message;
+import jasic.filip.chatapplication.R;
+
 
 public class MessageAdapter extends BaseAdapter implements View.OnLongClickListener{
 
     private Context mContext;
     private ArrayList<Message> mMessages;
 
-    MessageAdapter(Context context) {
+    public MessageAdapter(Context context) {
         mContext = context;
         mMessages = new ArrayList<>();
     }
@@ -67,7 +70,7 @@ public class MessageAdapter extends BaseAdapter implements View.OnLongClickListe
         Message Message = (Message) getItem(position);
         ViewHolder holder = (ViewHolder) view.getTag();
         holder.message.setText(Message.mMessage);
-        if (Message.getBot().equals("user")){
+        /*if (Message.getBot().equals("user")){
             holder.message.setGravity(Gravity.END);
             holder.message.setBackgroundColor(view.getResources().getColor(R.color.sendBackgroundColor));
             holder.message.setTextColor(view.getResources().getColor(R.color.sendTextColor));
@@ -75,7 +78,7 @@ public class MessageAdapter extends BaseAdapter implements View.OnLongClickListe
             holder.message.setGravity(Gravity.START);
             holder.message.setBackgroundColor(view.getResources().getColor(R.color.recivedBackground));
             holder.message.setTextColor(view.getResources().getColor(R.color.recivedTextColor));
-        }
+        }*/
         holder.message.setOnLongClickListener(this);
         holder.message.setTag(position);
         return view;

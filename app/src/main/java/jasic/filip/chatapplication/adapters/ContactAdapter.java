@@ -1,4 +1,4 @@
-package jasic.filip.chatapplication;
+package jasic.filip.chatapplication.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -14,13 +14,17 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Random;
 
+import jasic.filip.chatapplication.models.Contact;
+import jasic.filip.chatapplication.activities.Main4Activity;
+import jasic.filip.chatapplication.R;
+
 
 public class ContactAdapter extends BaseAdapter implements View.OnClickListener {
 
     private Context mContext;
     private ArrayList<Contact> mContacts;
 
-    ContactAdapter(Context context) {
+    public ContactAdapter(Context context) {
         mContext = context;
         mContacts = new ArrayList<>();
     }
@@ -66,18 +70,18 @@ public class ContactAdapter extends BaseAdapter implements View.OnClickListener 
             holder.nameFirst=view.findViewById(R.id.nameFirst);
             holder.image = view.findViewById(R.id.nextImage);
             holder.name = view.findViewById(R.id.name);
+            holder.image.setOnClickListener(this);
+            holder.image.setTag(position);
             view.setTag(holder);
         }
 
         Contact Contact = (Contact) getItem(position);
         ViewHolder holder = (ViewHolder) view.getTag();
-        holder.nameFirst.setText(Contact.mNameFirst);
-        holder.name.setText(Contact.mName);
-        holder.image.setImageDrawable(Contact.mImage);
+
+        holder.nameFirst.setText(Contact.getFirstName().substring(0,1).toUpperCase());
+        holder.name.setText(Contact.getName());
         holder.nameFirst.setBackgroundColor(getRandomColor());
 
-        holder.image.setOnClickListener(this);
-        holder.image.setTag(position);
         return view;
     }
 
@@ -91,7 +95,7 @@ public class ContactAdapter extends BaseAdapter implements View.OnClickListener 
 
                 if (view.getId() == R.id.nextImage) {
                     Intent intent = new Intent(mContext.getApplicationContext(), Main4Activity.class);
-                    intent.putExtra("contact_name", clicked.getName());
+                    intent.putExtra("contact_name", clicked.getId());
                     mContext.startActivity(intent);
                 }
                 break;

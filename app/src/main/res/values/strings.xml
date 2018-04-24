@@ -27,6 +27,8 @@
     <string name="ivan">Ivan Ivanovic</string>
     <string name="jovan">Jovan Jovanovic</string>
     <string name="milos">Milos Milosevic</string>
+    <string name="sample_letter">S</string>
+    <string name="sample_name">Some name</string>
 
     <string-array name="gender_spinner">
         <item>male</item>

@@ -1,4 +1,4 @@
-package jasic.filip.chatapplication;
+package jasic.filip.chatapplication.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +11,10 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import jasic.filip.chatapplication.models.Message;
+import jasic.filip.chatapplication.R;
+import jasic.filip.chatapplication.adapters.MessageAdapter;
 
 public class Main4Activity extends AppCompatActivity {
 
@@ -50,21 +54,21 @@ public class Main4Activity extends AppCompatActivity {
                     toast.show();
                     final EditText msg=findViewById(R.id.msg);
 
-                    Message message =new Message(msg.getText().toString(),"user");
-                    adapterMessage.addMessage(message);
+                    //Message message =new Message(msg.getText().toString(),"user","","","");
+                   // adapterMessage.addMessage(message);
                     adapterMessage.notifyDataSetChanged();
                     msg.setText("");
 
                 }
             }
         });
-        //dummy data
+        /*dummy data
 
-        adapterMessage.addMessage(new Message("Bot is saying something","bot"));
-        adapterMessage.addMessage(new Message("user is saying something","user"));
-        adapterMessage.addMessage(new Message("Bot is saying something2","bot"));
-        adapterMessage.addMessage(new Message("user is saying something2","user"));
-
+        adapterMessage.addMessage(new Message("Bot is saying something","bot","","",""));
+        adapterMessage.addMessage(new Message("user is saying something","user","","",""));
+        adapterMessage.addMessage(new Message("Bot is saying something2","bot","","",""));
+        adapterMessage.addMessage(new Message("user is saying something2","user","","",""));
+        */
         listMessages.setAdapter(adapterMessage);
 
     }

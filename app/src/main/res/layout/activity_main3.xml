@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="jasic.filip.chatapplication.Main3Activity">
+    tools:context="jasic.filip.chatapplication.activities.Main3Activity">
 
     <Button
         android:id="@+id/logout_list"
