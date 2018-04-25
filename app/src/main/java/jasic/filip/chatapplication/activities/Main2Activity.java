@@ -59,11 +59,11 @@ public class Main2Activity extends AppCompatActivity {
                         Contact contact=new Contact(0,username.getText().toString(),firstname.getText().toString(),
                                 lastname.getText().toString());
                         contactProvider.insertContact(contact);
-                        Intent loginIntent=new Intent(getApplicationContext(),Main3Activity.class);
+                        Intent loginIntent=new Intent(getApplicationContext(),MainActivity.class);
                         loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(loginIntent);
                     }else{
-                        Toast.makeText(getApplicationContext(),"Username already exist",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(),"Username already exist",Toast.LENGTH_SHORT).show();
                     }
 
                 }

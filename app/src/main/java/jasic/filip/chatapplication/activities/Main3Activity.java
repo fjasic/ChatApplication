@@ -45,12 +45,6 @@ public class Main3Activity extends AppCompatActivity {
             }
         }
 
-     /*   adapter.addContact(new Contact(("" + getResources().getString(R.string.djordje).toString().charAt(0)),getString(R.string.djordje),getResources().getDrawable(R.drawable.sendbutton),"","",""));
-        adapter.addContact(new Contact(("" + getResources().getString(R.string.petar).toString().charAt(0)),getString(R.string.petar),getResources().getDrawable(R.drawable.sendbutton),"","",""));
-        adapter.addContact(new Contact(("" + getResources().getString(R.string.ivan).toString().charAt(0)),getString(R.string.ivan),getResources().getDrawable(R.drawable.sendbutton),"","",""));
-        adapter.addContact(new Contact(("" + getResources().getString(R.string.jovan).toString().charAt(0)),getString(R.string.jovan),getResources().getDrawable(R.drawable.sendbutton),"","",""));
-        adapter.addContact(new Contact(("" + getResources().getString(R.string.milos).toString().charAt(0)),getString(R.string.milos),getResources().getDrawable(R.drawable.sendbutton),"","",""));
-*/
         list.setAdapter(adapter);
     }
 }

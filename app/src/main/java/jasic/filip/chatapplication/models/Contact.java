@@ -1,11 +1,11 @@
 package jasic.filip.chatapplication.models;
 
 public class Contact {
-    public int mId;
-    public String mFirstName;
-    public String mLastName;
-    public String mUsername;
-
+    private int mId;
+    private String mFirstName;
+    private String mLastName;
+    private String mUsername;
+    public static final String ID = "id";
 
     public Contact(int Id,String userName,String firstName,String lastName) {
         mId=Id;

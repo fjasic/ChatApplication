@@ -36,7 +36,7 @@
         android:layout_width="292dp"
         android:layout_height="45dp"
         android:gravity="center"
-        android:text="@string/johndoe"/>
+        android:text="@string/sample_name"/>
 
     <ListView
         android:id="@+id/listMessage"

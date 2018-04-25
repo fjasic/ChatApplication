@@ -1,12 +1,13 @@
 package jasic.filip.chatapplication.models;
 
 public class Message {
-    public String mMessage;
     private int mMesssageId;
-    public Contact mReceiverId;
-    public Contact mSenderId;
+    private Contact mReceiverId;
+    private Contact mSenderId;
+    private String mMessage;
 
-    public Message(int messageId,Contact reciverId,Contact senderId,int id,String message){
+
+    public Message(int messageId,Contact senderId,Contact reciverId,String message){
         mMessage=message;
         mMesssageId=messageId;
         mReceiverId=reciverId;

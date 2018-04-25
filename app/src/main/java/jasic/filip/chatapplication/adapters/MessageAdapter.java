@@ -2,6 +2,7 @@ package jasic.filip.chatapplication.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,16 +14,20 @@ import java.util.ArrayList;
 
 import jasic.filip.chatapplication.models.Message;
 import jasic.filip.chatapplication.R;
+import jasic.filip.chatapplication.providers.MessageProvider;
+import jasic.filip.chatapplication.utils.Preferences;
 
 
 public class MessageAdapter extends BaseAdapter implements View.OnLongClickListener{
 
     private Context mContext;
     private ArrayList<Message> mMessages;
+    private MessageProvider messageProvider;
 
     public MessageAdapter(Context context) {
         mContext = context;
         mMessages = new ArrayList<>();
+        messageProvider=new MessageProvider(context);
     }
 
     public void addMessage(Message Message) {
@@ -69,18 +74,23 @@ public class MessageAdapter extends BaseAdapter implements View.OnLongClickListe
 
         Message Message = (Message) getItem(position);
         ViewHolder holder = (ViewHolder) view.getTag();
-        holder.message.setText(Message.mMessage);
-        /*if (Message.getBot().equals("user")){
-            holder.message.setGravity(Gravity.END);
+
+        SharedPreferences sharedPref = mContext.getSharedPreferences(Preferences.NAME, Context.MODE_PRIVATE);
+        int loggedInUserId = sharedPref.getInt(Preferences.USER_LOGGED_IN, -1);
+
+        if(Message.getSenderId().getId()==loggedInUserId) {
             holder.message.setBackgroundColor(view.getResources().getColor(R.color.sendBackgroundColor));
             holder.message.setTextColor(view.getResources().getColor(R.color.sendTextColor));
-        }else if(Message.getBot().equals("bot")){
-            holder.message.setGravity(Gravity.START);
+            holder.message.setGravity(Gravity.END);
+        }else{
             holder.message.setBackgroundColor(view.getResources().getColor(R.color.recivedBackground));
             holder.message.setTextColor(view.getResources().getColor(R.color.recivedTextColor));
-        }*/
-        holder.message.setOnLongClickListener(this);
+            holder.message.setGravity(Gravity.END);
+        }
         holder.message.setTag(position);
+        holder.message.setOnLongClickListener(this);
+        holder.message.setText(Message.getMessage());
+
         return view;
     }
 
@@ -88,8 +98,10 @@ public class MessageAdapter extends BaseAdapter implements View.OnLongClickListe
     public boolean onLongClick(View view){
         switch (view.getId()) {
             case R.id.message1:
-                int i = Integer.parseInt(view.getTag().toString());
-                mMessages.remove(i);
+                int position = Integer.parseInt(view.getTag().toString());
+                Message message=mMessages.get(position);
+                messageProvider.deleteMessage(message.getMesssageId());
+                mMessages.remove(position);
                 notifyDataSetChanged();
                 return true;
             default:
