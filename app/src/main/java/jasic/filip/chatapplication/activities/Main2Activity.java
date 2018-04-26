@@ -29,6 +29,7 @@ public class Main2Activity extends AppCompatActivity {
     ContactProvider contactProvider;
     EditText username,password,firstname,lastname,email;
     TextView displayDate;
+    Button register_back;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +41,7 @@ public class Main2Activity extends AppCompatActivity {
         firstname=findViewById(R.id.first_name);
         lastname=findViewById(R.id.last_name);
         displayDate=findViewById(R.id.birth_date);
+        register_back=findViewById(R.id.register_page_register_btn);
 
         contactProvider=new ContactProvider(this);
 
@@ -49,7 +51,6 @@ public class Main2Activity extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
-        Button register_back=  findViewById(R.id.register_page_register_btn);
         register_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -59,11 +60,11 @@ public class Main2Activity extends AppCompatActivity {
                         Contact contact=new Contact(0,username.getText().toString(),firstname.getText().toString(),
                                 lastname.getText().toString());
                         contactProvider.insertContact(contact);
-                        Intent loginIntent=new Intent(getApplicationContext(),MainActivity.class);
-                        loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(loginIntent);
+                        Intent intent=new Intent(getApplicationContext(),MainActivity.class);
+
+                        startActivity(intent);
                     }else{
-                        Toast.makeText(getApplicationContext(),"Username already exist",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(),"Username already exist",Toast.LENGTH_LONG).show();
                     }
 
                 }

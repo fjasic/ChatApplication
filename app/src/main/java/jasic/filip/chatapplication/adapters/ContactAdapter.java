@@ -1,6 +1,6 @@
 package jasic.filip.chatapplication.adapters;
 
-import android.annotation.SuppressLint;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -21,29 +21,28 @@ import jasic.filip.chatapplication.R;
 
 public class ContactAdapter extends BaseAdapter implements View.OnClickListener {
 
-    private Context mContext;
-    private ArrayList<Contact> mContacts;
+    private Context fContext;
+    private ArrayList<Contact> fContacts;
 
     public ContactAdapter(Context context) {
-        mContext = context;
-        mContacts = new ArrayList<>();
+        fContext = context;
+        fContacts = new ArrayList<>();
     }
 
     public void addContact(Contact Contact) {
-        mContacts.add(Contact);
-        notifyDataSetChanged();
+        fContacts.add(Contact);
     }
 
     @Override
     public int getCount() {
-        return mContacts.size();
+        return fContacts.size();
     }
 
     @Override
     public Object getItem(int position) {
         Object rv = null;
         try {
-            rv = mContacts.get(position);
+            rv = fContacts.get(position);
         } catch (IndexOutOfBoundsException e) {
             e.printStackTrace();
         }
@@ -56,13 +55,11 @@ public class ContactAdapter extends BaseAdapter implements View.OnClickListener 
         return position;
     }
 
-    @SuppressLint("InflateParams")
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View view = convertView;
+    public View getView(int position, View view, ViewGroup parent) {
 
         if(view == null) {
-            LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(
+            LayoutInflater inflater = (LayoutInflater) fContext.getSystemService(
                     Context.LAYOUT_INFLATER_SERVICE);
             assert inflater != null;
             view = inflater.inflate(R.layout.contact_row, null);
@@ -90,13 +87,13 @@ public class ContactAdapter extends BaseAdapter implements View.OnClickListener 
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.nextImage:
-                int i = Integer.parseInt(view.getTag().toString());
-                Contact clicked = mContacts.get(i);
+                int position = Integer.parseInt(view.getTag().toString());
+                Contact clicked = fContacts.get(position);
 
                 if (view.getId() == R.id.nextImage) {
-                    Intent intent = new Intent(mContext.getApplicationContext(), Main4Activity.class);
-                    intent.putExtra("contact_name", clicked.getId());
-                    mContext.startActivity(intent);
+                    Intent intent = new Intent(fContext.getApplicationContext(), Main4Activity.class);
+                    intent.putExtra(Contact.ID, clicked.getId());
+                    fContext.startActivity(intent);
                 }
                 break;
         }

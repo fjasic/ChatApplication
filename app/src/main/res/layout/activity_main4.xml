@@ -43,9 +43,10 @@
         android:layout_width="wrap_content"
         android:layout_height="401dp"
         android:layout_alignParentStart="true"
+        android:divider="@null"
         android:layout_below="@+id/logout_message"
         android:stackFromBottom="true"
-        android:transcriptMode="alwaysScroll">
+    >
 
     </ListView>
 

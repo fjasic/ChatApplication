@@ -1,6 +1,5 @@
 package jasic.filip.chatapplication.adapters;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.Gravity;
@@ -20,31 +19,30 @@ import jasic.filip.chatapplication.utils.Preferences;
 
 public class MessageAdapter extends BaseAdapter implements View.OnLongClickListener{
 
-    private Context mContext;
-    private ArrayList<Message> mMessages;
-    private MessageProvider messageProvider;
+    private Context fContext;
+    private ArrayList<Message> fMessages;
+    private MessageProvider fMessageProvider;
 
     public MessageAdapter(Context context) {
-        mContext = context;
-        mMessages = new ArrayList<>();
-        messageProvider=new MessageProvider(context);
+        fContext = context;
+        fMessages = new ArrayList<>();
+        fMessageProvider=new MessageProvider(context);
     }
 
     public void addMessage(Message Message) {
-        mMessages.add(Message);
-        notifyDataSetChanged();
+        fMessages.add(Message);
     }
 
     @Override
     public int getCount() {
-        return mMessages.size();
+        return fMessages.size();
     }
 
     @Override
     public Object getItem(int position) {
         Object rv = null;
         try {
-            rv = mMessages.get(position);
+            rv = fMessages.get(position);
         } catch (IndexOutOfBoundsException e) {
             e.printStackTrace();
         }
@@ -57,13 +55,11 @@ public class MessageAdapter extends BaseAdapter implements View.OnLongClickListe
         return position;
     }
 
-    @SuppressLint("InflateParams")
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View view = convertView;
+    public View getView(int position, View view, ViewGroup parent) {
 
         if(view == null) {
-            LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(
+            LayoutInflater inflater = (LayoutInflater) fContext.getSystemService(
                     Context.LAYOUT_INFLATER_SERVICE);
             assert inflater != null;
             view = inflater.inflate(R.layout.message_row, null);
@@ -75,7 +71,7 @@ public class MessageAdapter extends BaseAdapter implements View.OnLongClickListe
         Message Message = (Message) getItem(position);
         ViewHolder holder = (ViewHolder) view.getTag();
 
-        SharedPreferences sharedPref = mContext.getSharedPreferences(Preferences.NAME, Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = fContext.getSharedPreferences(Preferences.NAME, Context.MODE_PRIVATE);
         int loggedInUserId = sharedPref.getInt(Preferences.USER_LOGGED_IN, -1);
 
         if(Message.getSenderId().getId()==loggedInUserId) {
@@ -85,7 +81,7 @@ public class MessageAdapter extends BaseAdapter implements View.OnLongClickListe
         }else{
             holder.message.setBackgroundColor(view.getResources().getColor(R.color.recivedBackground));
             holder.message.setTextColor(view.getResources().getColor(R.color.recivedTextColor));
-            holder.message.setGravity(Gravity.END);
+            holder.message.setGravity(Gravity.START);
         }
         holder.message.setTag(position);
         holder.message.setOnLongClickListener(this);
@@ -99,9 +95,9 @@ public class MessageAdapter extends BaseAdapter implements View.OnLongClickListe
         switch (view.getId()) {
             case R.id.message1:
                 int position = Integer.parseInt(view.getTag().toString());
-                Message message=mMessages.get(position);
-                messageProvider.deleteMessage(message.getMesssageId());
-                mMessages.remove(position);
+                Message message=fMessages.get(position);
+                fMessageProvider.deleteMessage(message.getId());
+                fMessages.remove(position);
                 notifyDataSetChanged();
                 return true;
             default:

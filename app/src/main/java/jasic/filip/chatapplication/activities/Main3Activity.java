@@ -17,21 +17,15 @@ import jasic.filip.chatapplication.utils.Preferences;
 
 public class Main3Activity extends AppCompatActivity {
     private ContactProvider contactProvider;
+    private Button logout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main3);
-
-        final Button logout=findViewById(R.id.logout_list);
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(Main3Activity.this,MainActivity.class);
-                startActivity(intent);
-            }
-        });
+        logout=findViewById(R.id.logout_list);
 
         contactProvider=new ContactProvider(this);
+
         ContactAdapter adapter=new ContactAdapter(this);
         ListView list= findViewById(R.id.list);
         Contact[] contacts=contactProvider.getContacts();
@@ -46,5 +40,13 @@ public class Main3Activity extends AppCompatActivity {
         }
 
         list.setAdapter(adapter);
+
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(Main3Activity.this,MainActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }

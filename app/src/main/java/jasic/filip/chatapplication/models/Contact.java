@@ -1,24 +1,24 @@
 package jasic.filip.chatapplication.models;
 
 public class Contact {
-    private int mId;
-    private String mFirstName;
-    private String mLastName;
-    private String mUsername;
+    private int fId;
+    private String fFirstName;
+    private String fLastName;
+    private String fUsername;
     public static final String ID = "id";
 
     public Contact(int Id,String userName,String firstName,String lastName) {
-        mId=Id;
-        mUsername=userName;
-        mFirstName = firstName;
-        mLastName=lastName;
+        fId=Id;
+        fUsername=userName;
+        fFirstName = firstName;
+        fLastName=lastName;
     }
-    public int getId(){return mId;}
-    public String getUsername(){return mUsername;}
-    public String getFirstName(){ return mFirstName; }
-    public String getLastName(){return  mLastName;}
+    public String getUsername(){return fUsername;}
+    public String getFirstName(){ return fFirstName; }
+    public String getLastName(){return  fLastName;}
     public String getName() {
         return getFirstName() + " " + getLastName();
     }
+    public int getId(){return fId;}
 
 }

@@ -21,15 +21,12 @@
     <string name="send">send</string>
     <string name="logout">logout</string>
     <string name="chatlist">my chat list</string>
+    <string name="message_sent">message sent!</string>
 
-    <string name="petar">Petar Petrovic</string>
-    <string name="djordje">Djordje Djordjevic</string>
-    <string name="ivan">Ivan Ivanovic</string>
-    <string name="jovan">Jovan Jovanovic</string>
-    <string name="milos">Milos Milosevic</string>
     <string name="sample_letter">S</string>
     <string name="sample_name">Some name</string>
-
+    <string name="sample_message">Sample message</string>
+    <string name="open_message">Open message</string>
     <string-array name="gender_spinner">
         <item>male</item>
         <item>female</item>

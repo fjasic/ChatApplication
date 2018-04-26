@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="64dp"
     android:id="@+id/message1"
+    android:text="@string/sample_message"
     />
 
 

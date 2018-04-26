@@ -10,15 +10,15 @@ import jasic.filip.chatapplication.models.Contact;
 
 public class ContactProvider {
 
-    private ChatDBHelper mHelper=null;
+    private ChatDBHelper fHelper=null;
 
     public ContactProvider(Context context) {
         super();
-        mHelper = new ChatDBHelper(context);
+        fHelper = new ChatDBHelper(context);
     }
 
     public void insertContact(Contact contact) {
-        SQLiteDatabase db = mHelper.getWritableDatabase();
+        SQLiteDatabase db = fHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(ChatDBHelper.COLUMN_USERNAME, contact.getUsername());
@@ -30,9 +30,10 @@ public class ContactProvider {
     }
 
     public Contact getContact(String username) {
-        SQLiteDatabase db = mHelper.getReadableDatabase();
+        SQLiteDatabase db = fHelper.getReadableDatabase();
 
-        Cursor cursor = db.query(ChatDBHelper.CONTACTS_TABLE_NAME, null, ChatDBHelper.COLUMN_USERNAME + "=?",
+        Cursor cursor = db.query(ChatDBHelper.CONTACTS_TABLE_NAME, null,
+                ChatDBHelper.COLUMN_USERNAME + "=?",
                 new String[] {username}, null, null, null);
 
         if (cursor.getCount() <= 0) {
@@ -48,9 +49,10 @@ public class ContactProvider {
     }
 
     public Contact[] getContacts() {
-        SQLiteDatabase db = mHelper.getReadableDatabase();
+        SQLiteDatabase db = fHelper.getReadableDatabase();
 
-        Cursor cursor = db.query(ChatDBHelper.CONTACTS_TABLE_NAME, null, null, null, null, null, null);
+        Cursor cursor = db.query(ChatDBHelper.CONTACTS_TABLE_NAME, null,
+                null, null, null, null, null);
 
         if (cursor.getCount() <= 0) {
             return null;
@@ -69,7 +71,7 @@ public class ContactProvider {
     }
 
     public Contact getContact(int id) {
-        SQLiteDatabase db = mHelper.getReadableDatabase();
+        SQLiteDatabase db = fHelper.getReadableDatabase();
 
         Cursor cursor = db.query(ChatDBHelper.CONTACTS_TABLE_NAME, null,
                 ChatDBHelper.COLUMN_CONTACT_ID + "=?", new String[] {Integer.toString(id)},
@@ -88,7 +90,7 @@ public class ContactProvider {
     }
 
     public void deleteContact(int id) {
-        SQLiteDatabase db = mHelper.getWritableDatabase();
+        SQLiteDatabase db = fHelper.getWritableDatabase();
         db.delete(ChatDBHelper.CONTACTS_TABLE_NAME, ChatDBHelper.COLUMN_CONTACT_ID + "=?",
                 new String[] {Integer.toString(id)});
         db.close();

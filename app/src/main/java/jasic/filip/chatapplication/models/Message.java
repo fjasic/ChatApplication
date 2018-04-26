@@ -1,25 +1,25 @@
 package jasic.filip.chatapplication.models;
 
 public class Message {
-    private int mMesssageId;
-    private Contact mReceiverId;
-    private Contact mSenderId;
-    private String mMessage;
+    private int fId;
+    private Contact fReceiverId;
+    private Contact fSenderId;
+    private String fMessage;
 
 
-    public Message(int messageId,Contact senderId,Contact reciverId,String message){
-        mMessage=message;
-        mMesssageId=messageId;
-        mReceiverId=reciverId;
-        mSenderId=senderId;
+    public Message(int Id,Contact senderId,Contact reciverId,String message){
+        fMessage=message;
+        fId=Id;
+        fReceiverId=reciverId;
+        fSenderId=senderId;
 
     }
 
     public String getMessage(){
-        return mMessage;
+        return fMessage;
     }
-    public Contact getReceiverId() {return mReceiverId;}
-    public Contact getSenderId(){return mSenderId;}
-    public int getMesssageId(){return mMesssageId;}
+    public Contact getReceiverId() {return fReceiverId;}
+    public Contact getSenderId(){return fSenderId;}
+    public int getId(){return fId;}
 
 }

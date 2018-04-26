@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,16 +20,14 @@ import jasic.filip.chatapplication.providers.ContactProvider;
 import jasic.filip.chatapplication.providers.MessageProvider;
 import jasic.filip.chatapplication.utils.Preferences;
 
-public class Main4Activity extends AppCompatActivity implements View.OnClickListener {
-    private Button send,logout;
+public class Main4Activity extends AppCompatActivity {
 
+    private Button send,logout;
     private Contact receiver,sender;
     private ContactProvider contactProvider;
-
     private EditText msg;
     private MessageAdapter adapterMessage;
     private MessageProvider messageProvider;
-
     private TextView contactName;
     private ListView listMessages;
 
@@ -55,12 +52,33 @@ public class Main4Activity extends AppCompatActivity implements View.OnClickList
         int senderId = sharedPref.getInt(Preferences.USER_LOGGED_IN, -1);
         sender = contactProvider.getContact(senderId);
 
-        //contactName.setText(receiver.getName());
+        contactName.setText(receiver.getName());
 
         adapterMessage=new MessageAdapter(this);
         listMessages.setAdapter(adapterMessage);
 
-        send.setOnClickListener(this);
+        send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                submitForm();
+                if (submitForm()) {
+                    Context context = getApplicationContext();
+
+                    CharSequence text = "message is sent";
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+
+                    Message message = new Message(0, sender, receiver, msg.getText().toString());
+                    messageProvider.insertMessage(message);
+
+                    adapterMessage.addMessage(message);
+                    adapterMessage.notifyDataSetChanged();
+                    msg.setText("");
+
+                }
+            }
+        });
 
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,27 +88,8 @@ public class Main4Activity extends AppCompatActivity implements View.OnClickList
             }
         });
     }
+
     @Override
-    public void onClick(View v) {
-        submitForm();
-        if (submitForm()) {
-            Context context = getApplicationContext();
-
-            CharSequence text = "message is sent";
-            int duration = Toast.LENGTH_SHORT;
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
-
-           // Message message = new Message(0, sender, receiver, msg.getText().toString());
-           // messageProvider.insertMessage(message);
-
-            //adapterMessage.addMessage(message);
-            adapterMessage.notifyDataSetChanged();
-            msg.setText("");
-
-        }
-    }
-   /* @Override
     public void onResume() {
         super.onResume();
         fetchMessages();
@@ -102,7 +101,7 @@ public class Main4Activity extends AppCompatActivity implements View.OnClickList
                 adapterMessage.addMessage(message);
             }
         }
-    }*/
+    }
 
     public boolean validateMsg() {
         if (msg.getText().toString().trim().length() ==0) {
