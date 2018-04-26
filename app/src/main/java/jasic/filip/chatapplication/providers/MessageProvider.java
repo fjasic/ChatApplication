@@ -10,17 +10,17 @@ import jasic.filip.chatapplication.models.Contact;
 import jasic.filip.chatapplication.models.Message;
 
 public class MessageProvider {
-    private ChatDBHelper fHelper;
-    private ContactProvider fContactProvider;
+    private ChatDBHelper mHelper;
+    private ContactProvider mContactProvider;
 
     public MessageProvider(Context context){
         super();
-        fHelper=new ChatDBHelper(context);
-        fContactProvider=new ContactProvider(context);
+        mHelper=new ChatDBHelper(context);
+        mContactProvider=new ContactProvider(context);
     }
 
     public void insertMessage(Message message) {
-        SQLiteDatabase db = fHelper.getWritableDatabase();
+        SQLiteDatabase db = mHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(ChatDBHelper.COLUMN_SENDER_ID,message.getSenderId().getId());
@@ -32,7 +32,7 @@ public class MessageProvider {
     }
 
     public Message[] getMessages() {
-        SQLiteDatabase db = fHelper.getReadableDatabase();
+        SQLiteDatabase db = mHelper.getReadableDatabase();
         Cursor cursor = db.query(ChatDBHelper.MESSAGE_TABLE_NAME, null, null, null, null, null, null);
 
         if (cursor.getCount() <= 0) {
@@ -52,7 +52,7 @@ public class MessageProvider {
     }
 
     public Message getMessage(int id) {
-        SQLiteDatabase db = fHelper.getReadableDatabase();
+        SQLiteDatabase db = mHelper.getReadableDatabase();
 
         Cursor cursor = db.query(ChatDBHelper.MESSAGE_TABLE_NAME, null,
                 ChatDBHelper.COLUMN_MESSAGE_ID + "=?", new String[] {Integer.toString(id)}, null,
@@ -71,7 +71,7 @@ public class MessageProvider {
     }
 
     public Message[] getMessages(int contactId1, int contactId2) {
-        SQLiteDatabase db = fHelper.getReadableDatabase();
+        SQLiteDatabase db = mHelper.getReadableDatabase();
 
         Cursor cursor = db.query(ChatDBHelper.MESSAGE_TABLE_NAME, null,
                 "(" + ChatDBHelper.COLUMN_SENDER_ID + "=? AND " + ChatDBHelper.COLUMN_SENDER_ID + "=?) OR " +
@@ -97,7 +97,7 @@ public class MessageProvider {
     }
 
     public void deleteMessage(int id) {
-        SQLiteDatabase db = fHelper.getWritableDatabase();
+        SQLiteDatabase db = mHelper.getWritableDatabase();
         db.delete(ChatDBHelper.MESSAGE_TABLE_NAME, ChatDBHelper.COLUMN_MESSAGE_ID + "=?",
                 new String[] {Integer.toString(id)});
         db.close();
@@ -109,8 +109,8 @@ public class MessageProvider {
         int receiverId = cursor.getInt(cursor.getColumnIndex(ChatDBHelper.COLUMN_SENDER_ID));
         String message = cursor.getString(cursor.getColumnIndex(ChatDBHelper.COLUMN_MESSAGE));
 
-        Contact sender = fContactProvider.getContact(senderId);
-        Contact receiver = fContactProvider.getContact(receiverId);
+        Contact sender = mContactProvider.getContact(senderId);
+        Contact receiver = mContactProvider.getContact(receiverId);
 
         return new Message(messageId,sender,receiver,message);
     }

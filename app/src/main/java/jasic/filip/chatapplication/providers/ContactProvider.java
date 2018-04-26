@@ -10,15 +10,15 @@ import jasic.filip.chatapplication.models.Contact;
 
 public class ContactProvider {
 
-    private ChatDBHelper fHelper=null;
+    private ChatDBHelper mHelper=null;
 
     public ContactProvider(Context context) {
         super();
-        fHelper = new ChatDBHelper(context);
+        mHelper = new ChatDBHelper(context);
     }
 
     public void insertContact(Contact contact) {
-        SQLiteDatabase db = fHelper.getWritableDatabase();
+        SQLiteDatabase db = mHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(ChatDBHelper.COLUMN_USERNAME, contact.getUsername());
@@ -30,7 +30,7 @@ public class ContactProvider {
     }
 
     public Contact getContact(String username) {
-        SQLiteDatabase db = fHelper.getReadableDatabase();
+        SQLiteDatabase db = mHelper.getReadableDatabase();
 
         Cursor cursor = db.query(ChatDBHelper.CONTACTS_TABLE_NAME, null,
                 ChatDBHelper.COLUMN_USERNAME + "=?",
@@ -49,7 +49,7 @@ public class ContactProvider {
     }
 
     public Contact[] getContacts() {
-        SQLiteDatabase db = fHelper.getReadableDatabase();
+        SQLiteDatabase db = mHelper.getReadableDatabase();
 
         Cursor cursor = db.query(ChatDBHelper.CONTACTS_TABLE_NAME, null,
                 null, null, null, null, null);
@@ -71,7 +71,7 @@ public class ContactProvider {
     }
 
     public Contact getContact(int id) {
-        SQLiteDatabase db = fHelper.getReadableDatabase();
+        SQLiteDatabase db = mHelper.getReadableDatabase();
 
         Cursor cursor = db.query(ChatDBHelper.CONTACTS_TABLE_NAME, null,
                 ChatDBHelper.COLUMN_CONTACT_ID + "=?", new String[] {Integer.toString(id)},
@@ -90,7 +90,7 @@ public class ContactProvider {
     }
 
     public void deleteContact(int id) {
-        SQLiteDatabase db = fHelper.getWritableDatabase();
+        SQLiteDatabase db = mHelper.getWritableDatabase();
         db.delete(ChatDBHelper.CONTACTS_TABLE_NAME, ChatDBHelper.COLUMN_CONTACT_ID + "=?",
                 new String[] {Integer.toString(id)});
         db.close();

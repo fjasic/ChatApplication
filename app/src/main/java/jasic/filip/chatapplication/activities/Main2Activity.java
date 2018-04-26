@@ -97,7 +97,6 @@ public class Main2Activity extends AppCompatActivity {
 
     }
 
-
     public boolean validateUsername() {
         if (username.getText().toString().trim().isEmpty()) {
             username.setError(getString(R.string.username_error));

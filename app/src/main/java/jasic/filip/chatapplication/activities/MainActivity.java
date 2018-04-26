@@ -49,7 +49,6 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
 
                     if (contact != null) {
                         Intent login_intent = new Intent(MainActivity.this, Main3Activity.class);
-
                         SharedPreferences sharedPref = getSharedPreferences(Preferences.NAME,
                                 Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPref.edit();
@@ -57,9 +56,9 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
                         editor.apply();
 
                         startActivity(login_intent);
+
                     }else {
                         Context context = getApplicationContext();
-
                         CharSequence text = "Username does not exist";
                         int duration = Toast.LENGTH_SHORT;
                         Toast toast = Toast.makeText(context, text, duration);

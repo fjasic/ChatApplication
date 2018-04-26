@@ -21,28 +21,28 @@ import jasic.filip.chatapplication.R;
 
 public class ContactAdapter extends BaseAdapter implements View.OnClickListener {
 
-    private Context fContext;
-    private ArrayList<Contact> fContacts;
+    private Context mContext;
+    private ArrayList<Contact> mContacts;
 
     public ContactAdapter(Context context) {
-        fContext = context;
-        fContacts = new ArrayList<>();
+        mContext = context;
+        mContacts = new ArrayList<>();
     }
 
     public void addContact(Contact Contact) {
-        fContacts.add(Contact);
+        mContacts.add(Contact);
     }
 
     @Override
     public int getCount() {
-        return fContacts.size();
+        return mContacts.size();
     }
 
     @Override
     public Object getItem(int position) {
         Object rv = null;
         try {
-            rv = fContacts.get(position);
+            rv = mContacts.get(position);
         } catch (IndexOutOfBoundsException e) {
             e.printStackTrace();
         }
@@ -59,7 +59,7 @@ public class ContactAdapter extends BaseAdapter implements View.OnClickListener 
     public View getView(int position, View view, ViewGroup parent) {
 
         if(view == null) {
-            LayoutInflater inflater = (LayoutInflater) fContext.getSystemService(
+            LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(
                     Context.LAYOUT_INFLATER_SERVICE);
             assert inflater != null;
             view = inflater.inflate(R.layout.contact_row, null);
@@ -77,7 +77,8 @@ public class ContactAdapter extends BaseAdapter implements View.OnClickListener 
 
         holder.nameFirst.setText(Contact.getFirstName().substring(0,1).toUpperCase());
         holder.name.setText(Contact.getName());
-        holder.nameFirst.setBackgroundColor(getRandomColor());
+        Random rnd = new Random();
+        holder.nameFirst.setBackgroundColor( Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256)));
 
         return view;
     }
@@ -88,17 +89,16 @@ public class ContactAdapter extends BaseAdapter implements View.OnClickListener 
         switch (view.getId()) {
             case R.id.nextImage:
                 int position = Integer.parseInt(view.getTag().toString());
-                Contact clicked = fContacts.get(position);
+                Contact clicked = mContacts.get(position);
 
                 if (view.getId() == R.id.nextImage) {
-                    Intent intent = new Intent(fContext.getApplicationContext(), Main4Activity.class);
+                    Intent intent = new Intent(mContext.getApplicationContext(), Main4Activity.class);
                     intent.putExtra(Contact.ID, clicked.getId());
-                    fContext.startActivity(intent);
+                    mContext.startActivity(intent);
                 }
                 break;
         }
     }
-
 
     private class ViewHolder {
         public TextView nameFirst = null;
@@ -106,8 +106,4 @@ public class ContactAdapter extends BaseAdapter implements View.OnClickListener 
         public ImageView image = null;
     }
 
-    private int getRandomColor(){
-        Random rnd = new Random();
-        return Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
-    }
 }
