@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import jasic.filip.chatapplication.helpers.ChatDBHelper;
 import jasic.filip.chatapplication.models.Contact;
 import jasic.filip.chatapplication.models.Message;
 import jasic.filip.chatapplication.R;
@@ -45,16 +46,21 @@ public class Main4Activity extends AppCompatActivity {
         contactProvider=new ContactProvider(this);
         messageProvider=new MessageProvider(this);
 
-        int receiverId = getIntent().getIntExtra(Contact.ID,-1);
+        final int receiverId = getIntent().getIntExtra(Contact.ID,-1);
         receiver = contactProvider.getContact(receiverId);
 
         SharedPreferences sharedPref = getSharedPreferences(Preferences.NAME, Context.MODE_PRIVATE);
-        int senderId = sharedPref.getInt(Preferences.USER_LOGGED_IN, -1);
+        final int senderId = sharedPref.getInt(Preferences.USER_LOGGED_IN, -1);
         sender = contactProvider.getContact(senderId);
 
         contactName.setText(receiver.getName());
 
         adapterMessage=new MessageAdapter(this);
+
+
+        Message[] messages= messageProvider.getMessages(senderId,receiverId);
+        adapterMessage.update(messages);
+
         listMessages.setAdapter(adapterMessage);
 
         send.setOnClickListener(new View.OnClickListener() {
@@ -74,6 +80,7 @@ public class Main4Activity extends AppCompatActivity {
 
                     adapterMessage.addMessage(message);
                     adapterMessage.notifyDataSetChanged();
+
                     msg.setText("");
 
                 }
@@ -87,20 +94,6 @@ public class Main4Activity extends AppCompatActivity {
                 startActivity(logoutIntent);
             }
         });
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        fetchMessages();
-    }
-    private void fetchMessages() {
-        Message[] messages = messageProvider.getMessages(sender.getId(), receiver.getId());
-        if (messages != null) {
-            for (Message message : messages) {
-                adapterMessage.addMessage(message);
-            }
-        }
     }
 
     public boolean validateMsg() {

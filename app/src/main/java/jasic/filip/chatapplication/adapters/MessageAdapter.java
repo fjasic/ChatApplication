@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -18,7 +17,7 @@ import jasic.filip.chatapplication.providers.MessageProvider;
 import jasic.filip.chatapplication.utils.Preferences;
 
 
-public class MessageAdapter extends BaseAdapter implements View.OnLongClickListener{
+public class MessageAdapter extends BaseAdapter{
 
     private Context mContext;
     private ArrayList<Message> mMessagess;
@@ -66,7 +65,6 @@ public class MessageAdapter extends BaseAdapter implements View.OnLongClickListe
             view = inflater.inflate(R.layout.message_row, null);
             ViewHolder holder = new ViewHolder();
             holder.message=view.findViewById(R.id.message1);
-            holder.messageContainer=view.findViewById(R.id.message_container);
             view.setTag(holder);
         }
 
@@ -79,38 +77,30 @@ public class MessageAdapter extends BaseAdapter implements View.OnLongClickListe
         if(Message.getSenderId().getId()==loggedInUserId) {
             holder.message.setBackgroundColor(view.getResources().getColor(R.color.sendBackgroundColor));
             holder.message.setTextColor(view.getResources().getColor(R.color.sendTextColor));
-            holder.messageContainer.setGravity(Gravity.END);
+            holder.message.setGravity(Gravity.END);
         }else{
             holder.message.setBackgroundColor(view.getResources().getColor(R.color.recivedBackground));
             holder.message.setTextColor(view.getResources().getColor(R.color.recivedTextColor));
-            holder.messageContainer.setGravity(Gravity.START);
+            holder.message.setGravity(Gravity.START);
         }
         holder.message.setTag(position);
-        holder.message.setOnLongClickListener(this);
         holder.message.setText(Message.getMessage());
 
         return view;
     }
 
-    @Override
-    public boolean onLongClick(View view){
-        switch (view.getId()) {
-            case R.id.message1:
-                int position = Integer.parseInt(view.getTag().toString());
-                Message message=mMessagess.get(position);
-                mMessageProvider.deleteMessage(message.getId());
-                mMessagess.remove(position);
-                notifyDataSetChanged();
-                return true;
-            default:
-                return false;
+    public void update(Message[] messages){
+        if (messages != null) {
+            for (Message message : messages) {
+                mMessagess.add(message);
+            }
         }
-
+        notifyDataSetChanged();
     }
+
 
     private class ViewHolder {
         public TextView message = null;
-        public RelativeLayout messageContainer = null;
 
     }
 }
