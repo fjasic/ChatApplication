@@ -17,31 +17,19 @@ public class ContactProvider {
         mHelper = new ChatDBHelper(context);
     }
 
-    public void insertContact(Contact contact) {
-        SQLiteDatabase db = mHelper.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(ChatDBHelper.COLUMN_USERNAME, contact.getUsername());
-        values.put(ChatDBHelper.COLUMN_FIRSTNAME, contact.getFirstName());
-        values.put(ChatDBHelper.COLUMN_LASTNAME, contact.getLastName());
-
-        db.insert(ChatDBHelper.CONTACTS_TABLE_NAME, null, values);
-        db.close();
-    }
-
     public Contact getContact(String username) {
-        SQLiteDatabase db = mHelper.getReadableDatabase();
+            SQLiteDatabase db = mHelper.getReadableDatabase();
 
-        Cursor cursor = db.query(ChatDBHelper.CONTACTS_TABLE_NAME, null,
-                ChatDBHelper.COLUMN_USERNAME + "=?",
-                new String[] {username}, null, null, null);
+            Cursor cursor = db.query(ChatDBHelper.CONTACTS_TABLE_NAME, null,
+                    ChatDBHelper.COLUMN_USERNAME + "=?",
+                    new String[] {username}, null, null, null);
 
-        if (cursor.getCount() <= 0) {
-            return null;
-        }
+            if (cursor.getCount() <= 0) {
+                return null;
+            }
 
-        cursor.moveToFirst();
-        Contact contact = createContact(cursor);
+            cursor.moveToFirst();
+            Contact contact = createContact(cursor);
 
         db.close();
 
@@ -68,6 +56,18 @@ public class ContactProvider {
         db.close();
 
         return contacts;
+    }
+
+    public void insertContact(Contact contact) {
+        SQLiteDatabase db = mHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(ChatDBHelper.COLUMN_USERNAME, contact.getUsername());
+        values.put(ChatDBHelper.COLUMN_FIRSTNAME, contact.getFirstName());
+        values.put(ChatDBHelper.COLUMN_LASTNAME, contact.getLastName());
+
+        db.insert(ChatDBHelper.CONTACTS_TABLE_NAME, null, values);
+        db.close();
     }
 
     public Contact getContact(int id) {

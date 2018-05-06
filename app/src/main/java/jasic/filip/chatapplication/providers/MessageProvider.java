@@ -74,8 +74,8 @@ public class MessageProvider {
         SQLiteDatabase db = mHelper.getReadableDatabase();
 
         Cursor cursor = db.query(ChatDBHelper.MESSAGE_TABLE_NAME, null,
-                "(" + ChatDBHelper.COLUMN_SENDER_ID + "=? AND " + ChatDBHelper.COLUMN_SENDER_ID + "=?) OR " +
-                        "(" + ChatDBHelper.COLUMN_SENDER_ID + "=? AND " + ChatDBHelper.COLUMN_SENDER_ID + "=?)",
+                "(" + ChatDBHelper.COLUMN_SENDER_ID + "=? AND " + ChatDBHelper.COLUMN_RECEIVER_ID + "=?) OR " +
+                        "(" + ChatDBHelper.COLUMN_SENDER_ID + "=? AND " + ChatDBHelper.COLUMN_RECEIVER_ID + "=?)",
                 new String[] {Integer.toString(contactId1), Integer.toString(contactId2),
                         Integer.toString(contactId2), Integer.toString(contactId1)},
                 null, null, null, null);
@@ -95,6 +95,7 @@ public class MessageProvider {
 
         return messages;
     }
+
 
     public void deleteMessage(int id) {
         SQLiteDatabase db = mHelper.getWritableDatabase();

@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,106 +14,115 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import jasic.filip.chatapplication.R;
+import jasic.filip.chatapplication.adapters.MessageAdapter;
 import jasic.filip.chatapplication.helpers.ChatDBHelper;
 import jasic.filip.chatapplication.models.Contact;
 import jasic.filip.chatapplication.models.Message;
-import jasic.filip.chatapplication.R;
-import jasic.filip.chatapplication.adapters.MessageAdapter;
 import jasic.filip.chatapplication.providers.ContactProvider;
 import jasic.filip.chatapplication.providers.MessageProvider;
 import jasic.filip.chatapplication.utils.Preferences;
 
-public class Main4Activity extends AppCompatActivity {
+public class Main4Activity extends AppCompatActivity implements View.OnClickListener, TextWatcher {
 
-    private Button send,logout;
-    private Contact receiver,sender;
-    private ContactProvider contactProvider;
-    private EditText msg;
-    private MessageAdapter adapterMessage;
-    private MessageProvider messageProvider;
-    private TextView contactName;
-    private ListView listMessages;
+    private Button mButtonLogout, mButtonSend;
+    private EditText mMessage;
+    private MessageAdapter mMessageAdapter;
+    private TextView mContactName;
+    private ContactProvider mContactProvider;
+    private Contact mReceiver, mSender;
+    private MessageProvider mMessageProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main4);
 
-        msg=findViewById(R.id.msg);
-        contactName = findViewById(R.id.chatName);
-        send=findViewById(R.id.send_button);
-        logout=findViewById(R.id.logout_message);
-        listMessages=findViewById(R.id.listMessage);
+        mContactProvider = new ContactProvider(this);
+        mMessageProvider = new MessageProvider(this);
 
-        contactProvider=new ContactProvider(this);
-        messageProvider=new MessageProvider(this);
+        mButtonLogout = findViewById(R.id.logout_message);
+        mButtonSend = findViewById(R.id.send_button);
+        mMessage = findViewById(R.id.msg);
+        mContactName = findViewById(R.id.chatName);
 
-        final int receiverId = getIntent().getIntExtra(Contact.ID,-1);
-        receiver = contactProvider.getContact(receiverId);
+        int receiverId = getIntent().getIntExtra(Contact.ID, -1);
+        mReceiver = mContactProvider.getContact(receiverId);
 
         SharedPreferences sharedPref = getSharedPreferences(Preferences.NAME, Context.MODE_PRIVATE);
-        final int senderId = sharedPref.getInt(Preferences.USER_LOGGED_IN, -1);
-        sender = contactProvider.getContact(senderId);
+        int senderId = sharedPref.getInt(Preferences.USER_LOGGED_IN, -1);
+        mSender = mContactProvider.getContact(senderId);
 
-        contactName.setText(receiver.getName());
+        mContactName.setText(mReceiver.getName());
 
-        adapterMessage=new MessageAdapter(this);
+        mButtonSend.setEnabled(false);
 
+        mMessage.addTextChangedListener(this);
 
-        Message[] messages= messageProvider.getMessages(senderId,receiverId);
-        adapterMessage.update(messages);
+        mButtonSend.setOnClickListener(this);
+        mButtonLogout.setOnClickListener(this);
 
-        listMessages.setAdapter(adapterMessage);
+        mMessageAdapter = new MessageAdapter(this);
 
-        send.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                submitForm();
-                if (submitForm()) {
-                    Context context = getApplicationContext();
+        ListView messages = findViewById(R.id.listMessage);
 
-                    CharSequence text = "message is sent";
-                    int duration = Toast.LENGTH_SHORT;
-                    Toast toast = Toast.makeText(context, text, duration);
-                    toast.show();
+        messages.setAdapter(mMessageAdapter);
 
-                    Message message = new Message(0, sender, receiver, msg.getText().toString());
-                    messageProvider.insertMessage(message);
+    }
 
-                    adapterMessage.addMessage(message);
-                    adapterMessage.notifyDataSetChanged();
+    @Override
+    public void onResume() {
+        super.onResume();
+        fetchMessages();
+    }
 
-                    msg.setText("");
-
-                }
-            }
-        });
-
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent logoutIntent = new Intent(Main4Activity.this,MainActivity.class);
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.logout_message:
+                Intent logoutIntent = new Intent(getApplicationContext(), MainActivity.class);
+                logoutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(logoutIntent);
-            }
-        });
+                break;
+            case R.id.send_button:
+                Toast.makeText(getApplicationContext(), R.string.message_sent, Toast.LENGTH_LONG).show();
+                Message message = new Message(0, mSender, mReceiver, mMessage.getText().toString());
+
+                mMessageProvider.insertMessage(message);
+
+                mMessageAdapter.addMessage(message);
+                mMessageAdapter.notifyDataSetChanged();
+                mMessage.setText("");
+                mButtonSend.setEnabled(false);
+                break;
+        }
     }
 
-    public boolean validateMsg() {
-        if (msg.getText().toString().trim().length() ==0) {
-            msg.setError(getString(R.string.empty_message));
-            msg.requestFocus();
-            return false;
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        if (charSequence.length() != 0) {
+            mButtonSend.setEnabled(true);
         } else {
-            return true;
+            mButtonSend.setEnabled(false);
         }
+    }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
 
     }
 
-    public boolean submitForm() {
-        if (!validateMsg()) {
-            return false;
+    private void fetchMessages() {
+        Message[] messages = mMessageProvider.getMessages(mSender.getId(), mReceiver.getId());
+        if (messages != null) {
+            for (Message message : messages) {
+                mMessageAdapter.addMessage(message);
+            }
         }
-        return true;
     }
-
 }

@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -17,32 +18,32 @@ import jasic.filip.chatapplication.providers.MessageProvider;
 import jasic.filip.chatapplication.utils.Preferences;
 
 
-public class MessageAdapter extends BaseAdapter{
+public class MessageAdapter extends BaseAdapter implements View.OnLongClickListener{
 
     private Context mContext;
-    private ArrayList<Message> mMessagess;
+    private ArrayList<Message> mMessages;
     private MessageProvider mMessageProvider;
 
     public MessageAdapter(Context context) {
         mContext = context;
-        mMessagess = new ArrayList<>();
+        mMessages = new ArrayList<>();
         mMessageProvider=new MessageProvider(context);
     }
 
-    public void addMessage(Message Message) {
-        mMessagess.add(Message);
+    public void addMessage(Message message) {
+        mMessages.add(message);
     }
 
     @Override
     public int getCount() {
-        return mMessagess.size();
+        return mMessages.size();
     }
 
     @Override
     public Object getItem(int position) {
         Object rv = null;
         try {
-            rv = mMessagess.get(position);
+            rv = mMessages.get(position);
         } catch (IndexOutOfBoundsException e) {
             e.printStackTrace();
         }
@@ -89,18 +90,26 @@ public class MessageAdapter extends BaseAdapter{
         return view;
     }
 
-    public void update(Message[] messages){
-        if (messages != null) {
-            for (Message message : messages) {
-                mMessagess.add(message);
-            }
+
+    @Override
+    public boolean onLongClick(View view) {
+        switch (view.getId()) {
+            case R.id.message:
+                int position = Integer.parseInt(view.getTag().toString());
+                Message message = mMessages.get(position);
+                mMessageProvider.deleteMessage(message.getId());
+                mMessages.remove(position);
+                notifyDataSetChanged();
+                return true;
+            default:
+                return false;
         }
-        notifyDataSetChanged();
     }
 
 
     private class ViewHolder {
         public TextView message = null;
+
 
     }
 }
