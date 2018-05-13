@@ -1,5 +1,5 @@
 package jasic.filip.chatapplication.providers;
-
+/*
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -8,9 +8,9 @@ import android.database.sqlite.SQLiteDatabase;
 import jasic.filip.chatapplication.helpers.ChatDBHelper;
 import jasic.filip.chatapplication.models.Contact;
 import jasic.filip.chatapplication.models.Message;
-
+*/
 public class MessageProvider {
-    private ChatDBHelper mHelper;
+    /*private ChatDBHelper mHelper;
     private ContactProvider mContactProvider;
 
     public MessageProvider(Context context){
@@ -114,5 +114,5 @@ public class MessageProvider {
         Contact receiver = mContactProvider.getContact(receiverId);
 
         return new Message(messageId,sender,receiver,message);
-    }
+    }*/
 }

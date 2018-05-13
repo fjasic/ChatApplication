@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import jasic.filip.chatapplication.models.Message;
 import jasic.filip.chatapplication.R;
@@ -27,13 +28,20 @@ public class MessageAdapter extends BaseAdapter implements View.OnLongClickListe
     public MessageAdapter(Context context) {
         mContext = context;
         mMessages = new ArrayList<>();
-        mMessageProvider=new MessageProvider(context);
+       // mMessageProvider=new MessageProvider(context);
     }
 
     public void addMessage(Message message) {
         mMessages.add(message);
     }
 
+    public void update(Message[] messages) {
+        mMessages.clear();
+        if (messages != null) {
+            Collections.addAll(mMessages, messages);
+        }
+        notifyDataSetChanged();
+    }
     @Override
     public int getCount() {
         return mMessages.size();
@@ -73,9 +81,10 @@ public class MessageAdapter extends BaseAdapter implements View.OnLongClickListe
         ViewHolder holder = (ViewHolder) view.getTag();
 
         SharedPreferences sharedPref = mContext.getSharedPreferences(Preferences.NAME, Context.MODE_PRIVATE);
-        int loggedInUserId = sharedPref.getInt(Preferences.USER_LOGGED_IN, -1);
+       //int loggedInUserId = sharedPref.getInt(Preferences.USER_LOGGED_IN, -1);
+        String sender_username = sharedPref.getString("loggedin_username", null);
 
-        if(Message.getSenderId().getId()==loggedInUserId) {
+        if((Message.getSender().compareTo(sender_username))==0) {
             holder.message.setBackgroundColor(view.getResources().getColor(R.color.sendBackgroundColor));
             holder.message.setTextColor(view.getResources().getColor(R.color.sendTextColor));
             holder.message.setGravity(Gravity.END);
@@ -95,11 +104,11 @@ public class MessageAdapter extends BaseAdapter implements View.OnLongClickListe
     public boolean onLongClick(View view) {
         switch (view.getId()) {
             case R.id.message:
-                int position = Integer.parseInt(view.getTag().toString());
-                Message message = mMessages.get(position);
-                mMessageProvider.deleteMessage(message.getId());
-                mMessages.remove(position);
-                notifyDataSetChanged();
+               // int position = Integer.parseInt(view.getTag().toString());
+                //Message message = mMessages.get(position);
+                //mMessageProvider.deleteMessage(message.getId());
+                //mMessages.remove(position);
+               // notifyDataSetChanged();
                 return true;
             default:
                 return false;

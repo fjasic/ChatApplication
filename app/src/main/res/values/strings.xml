@@ -28,7 +28,14 @@
     <string name="sample_message">Sample message</string>
     <string name="open_message">Open message</string>
     <string-array name="gender_spinner">
+
         <item>male</item>
         <item>female</item>
     </string-array>
+
+    <string name="refresh">Refresh</string>
+    <string name="success_user_register">User successfully registred</string>
+    <string name="error_cannot_logout">Cannot logout</string>
+    <string name="error_message_not_send">Message not send</string>
+
 </resources>

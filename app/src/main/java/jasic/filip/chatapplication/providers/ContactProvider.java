@@ -1,5 +1,5 @@
 package jasic.filip.chatapplication.providers;
-
+/*
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -7,9 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 
 import jasic.filip.chatapplication.helpers.ChatDBHelper;
 import jasic.filip.chatapplication.models.Contact;
-
+*/
 public class ContactProvider {
-
+/*
     private ChatDBHelper mHelper=null;
 
     public ContactProvider(Context context) {
@@ -103,5 +103,5 @@ public class ContactProvider {
         String lastName = cursor.getString(cursor.getColumnIndex(ChatDBHelper.COLUMN_LASTNAME));
 
         return new Contact(contactId, username, firstName, lastName);
-    }
+    }*/
 }
