@@ -3,11 +3,10 @@ package jasic.filip.chatapplication.activities;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Handler;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -27,27 +26,23 @@ import java.util.Date;
 import java.util.Objects;
 
 import jasic.filip.chatapplication.R;
-import jasic.filip.chatapplication.helpers.HttpHelper;
-import jasic.filip.chatapplication.models.Contact;
-import jasic.filip.chatapplication.providers.ContactProvider;
-import jasic.filip.chatapplication.utils.Preferences;
+import jasic.filip.chatapplication.helpers.HTTPHelper;
+
 
 public class RegisterActivity extends Activity {
     private DatePickerDialog.OnDateSetListener dateSetListener;
-    ContactProvider contactProvider;
     EditText username,password,firstname,lastname,email;
     TextView displayDate;
     Button register_back;
-
-    private HttpHelper httphelper;
-    private Handler handler;
-
-    private static String BASE_URL = "http://18.205.194.168:80";
-    private static String REGISTER_URL = BASE_URL + "/register";
+    Handler mHandler;
+    HTTPHelper mHTTPHelper;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+
+        mHTTPHelper = new HTTPHelper();
+        mHandler = new Handler();
 
         username =  findViewById(R.id.register_username);
         password = findViewById(R.id.register_password);
@@ -57,7 +52,6 @@ public class RegisterActivity extends Activity {
         displayDate=findViewById(R.id.birth_date);
         register_back=findViewById(R.id.register_page_register_btn);
 
-       // contactProvider=new ContactProvider(this);
 
         Spinner spinner= findViewById(R.id.gender_spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -70,41 +64,34 @@ public class RegisterActivity extends Activity {
             public void onClick(View v) {
                 submitForm();
                 if(submitForm()){
-           /*         if(contactProvider.getContact(username.getText().toString())==null){
-                        Contact contact=new Contact(0,username.getText().toString(),firstname.getText().toString(),
-                                lastname.getText().toString());
-                        contactProvider.insertContact(contact);
-                        Intent intent=new Intent(getApplicationContext(),MainActivity.class);
-
-                        startActivity(intent);
-                    }else{
-                        Toast.makeText(getApplicationContext(),"Username already exist",Toast.LENGTH_LONG).show();
-                    }
-
-*/
                     new Thread(new Runnable() {
+                        @Override
                         public void run() {
                             JSONObject jsonObject = new JSONObject();
                             try {
-                                jsonObject.put("username", username.getText().toString());
-                                jsonObject.put("password", password.getText().toString());
-                                jsonObject.put("email", email.getText().toString());
+                                jsonObject.put(HTTPHelper.USERNAME, username.getText().toString());
+                                jsonObject.put(HTTPHelper.PASSWORD, password.getText().toString());
+                                jsonObject.put(HTTPHelper.EMAIL, email.getText().toString());
 
-                                final boolean response = httphelper.registerUserOnServer(RegisterActivity.this, REGISTER_URL, jsonObject);
+                                final HTTPHelper.HTTPResponse res = mHTTPHelper.postJSONObjectFromURL(HTTPHelper.URL_REGISTER, jsonObject);
 
-                                handler.post(new Runnable(){
+                                mHandler.post(new Runnable(){
                                     public void run() {
-                                        if (response) {
-                                            Toast.makeText(RegisterActivity.this, getText(R.string.success_user_register), Toast.LENGTH_SHORT).show();
-                                            Intent LoginActivity_intent = new Intent(RegisterActivity.this, MainActivity.class);
-                                            startActivity(LoginActivity_intent);
+                                        if (res.code == HTTPHelper.CODE_SUCCESS) {
+                                            Toast.makeText(RegisterActivity.this, R.string.user_registered, Toast.LENGTH_LONG).show();
+                                            Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                                            loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                            startActivity(loginIntent);
+                                        } else if (res.code == HTTPHelper.CODE_USER_EXISTS) {
+                                            Toast.makeText(RegisterActivity.this, R.string.username_taken,
+                                                    Toast.LENGTH_LONG).show();
                                         } else {
-                                            SharedPreferences prefs = getSharedPreferences(Preferences.NAME, MODE_PRIVATE);
-                                            String err_msg = prefs.getString("register_err_msg", null);
-                                            Toast.makeText(RegisterActivity.this, err_msg, Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(RegisterActivity.this, getString(R.string.error) + " " +
+                                                    res.code + ": " +res.message, Toast.LENGTH_LONG).show();
                                         }
                                     }
                                 });
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             } catch (IOException e) {
@@ -112,6 +99,7 @@ public class RegisterActivity extends Activity {
                             }
                         }
                     }).start();
+
                 }
             }
         });
@@ -140,9 +128,6 @@ public class RegisterActivity extends Activity {
             }
         };
 
-
-        httphelper = new HttpHelper();
-        handler = new Handler();
     }
 
     public boolean validateUsername() {

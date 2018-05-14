@@ -6,12 +6,20 @@
     tools:context="jasic.filip.chatapplication.activities.MessageActivity">
 
     <Button
-        android:layout_width="wrap_content"
+        android:id="@+id/refresh_msg"
+        android:layout_width="95dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/logout_message"
+        android:text="@string/refresh" />
+
+    <Button
+        android:id="@+id/logout_message"
+        android:layout_width="113dp"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:text="@string/logout"
-        android:id="@+id/logout_message"/>
+        android:text="@string/logout" />
 
     <Button
         android:layout_width="wrap_content"
@@ -33,20 +41,21 @@
 
     <TextView
         android:id="@+id/chatName"
-        android:layout_width="292dp"
-        android:layout_height="45dp"
+        android:layout_width="177dp"
+        android:layout_height="53dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:gravity="center"
-        android:text="@string/sample_name"/>
+        android:text="@string/sample_name" />
 
     <ListView
         android:id="@+id/listMessage"
         android:layout_width="wrap_content"
         android:layout_height="401dp"
+        android:layout_above="@+id/send_button"
         android:layout_alignParentStart="true"
         android:divider="@null"
-        android:layout_below="@+id/logout_message"
-        android:stackFromBottom="true"
-    >
+        android:stackFromBottom="true">
 
     </ListView>
 

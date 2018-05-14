@@ -4,12 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Handler;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -18,138 +17,136 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-import jasic.filip.chatapplication.helpers.HttpHelper;
+import jasic.filip.chatapplication.helpers.HTTPHelper;
 import jasic.filip.chatapplication.models.Contact;
 import jasic.filip.chatapplication.R;
 import jasic.filip.chatapplication.adapters.ContactAdapter;
-import jasic.filip.chatapplication.providers.ContactProvider;
 import jasic.filip.chatapplication.utils.Preferences;
 
-public class ContactActivity extends Activity implements  View.OnClickListener {
-  //  private ContactProvider contactProvider;
+public class ContactActivity extends Activity implements View.OnClickListener {
     private Button logout,refresh;
-    private ContactAdapter adapter;
-    private String loggedin_username,loggedUserId;
-    private TextView loggedInAs;
     private ListView list;
-
-    private HttpHelper httphelper;
-    private Handler handler;
-    private static String BASE_URL = "http://18.205.194.168:80";
-    private static String CONTACTS_URL = BASE_URL + "/contacts";
-    private static String LOGOUT_URL = BASE_URL + "/logout";
+    HTTPHelper mHTTPHelper;
+    Handler mHandler;
+    String sessionId,loggedUser;
+    ContactAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main3);
-        logout = findViewById(R.id.logout_list);
-        refresh=findViewById(R.id.btn_refresh);
-        loggedInAs=findViewById(R.id.chatlist);
-        list = findViewById(R.id.list);
+
+        mHTTPHelper = new HTTPHelper();
+        mHandler = new Handler();
+
+        logout=findViewById(R.id.logout_list);
+        list= findViewById(R.id.list);
+        refresh=findViewById(R.id.refresh);
+
         logout.setOnClickListener(this);
         refresh.setOnClickListener(this);
 
-        // contactProvider=new ContactProvider(this);
+        adapter=new ContactAdapter(this);
 
-        adapter = new ContactAdapter(this);
+        SharedPreferences sharedPreferences=getSharedPreferences(Preferences.NAME, Context.MODE_PRIVATE);
+        sessionId=sharedPreferences.getString(Preferences.SESSION_ID,null);
+        loggedUser = sharedPreferences.getString(Preferences.USER_LOGGED_IN, null);
+
+        if (sessionId == null) {
+            Toast.makeText(this, R.string.unknown_error, Toast.LENGTH_LONG).show();
+            Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
+            loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(loginIntent);
+        }
+
         list.setAdapter(adapter);
 
-        // Contact[] contacts=contactProvider.getContacts();
-
-        SharedPreferences sharedPreferences = getSharedPreferences(Preferences.NAME, Context.MODE_PRIVATE);
-        loggedUserId = sharedPreferences.getString(Preferences.USER_LOGGED_IN, null);
-        loggedin_username = sharedPreferences.getString("loggedin_username", null);
-
-        loggedInAs.setText(loggedin_username);
-
-        httphelper =new HttpHelper();
-        handler=new Handler();
-        /*for(Contact contact : contacts){
-            if (contact.getId() !=loggedUserId){
-                adapter.addContact(contact);
-            }
-        }*/
     }
 
     @Override
-    public void onClick(View view) {
-        // Starts main activity if logout button is pressed
-        switch (view.getId()) {
+    public void onClick(View v) {
+        switch (v.getId()){
             case R.id.logout_list:
-
                 new Thread(new Runnable() {
+                    @Override
                     public void run() {
                         try {
-
-                            final boolean success = httphelper.logOutUserFromServer(ContactActivity.this, LOGOUT_URL);
-
-                            handler.post(new Runnable() {
-                                public void run() {
-                                    if (!success) {
-                                        Toast.makeText(ContactActivity.this, getText(R.string.error_cannot_logout), Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        Intent intMainactivity = new Intent(ContactActivity.this, MainActivity.class);
-                                        startActivity(intMainactivity);
+                            final HTTPHelper.HTTPResponse res = mHTTPHelper.postJSONObjectFromURL(HTTPHelper.URL_LOGOUT, new JSONObject(), sessionId);
+                            if (res.code == HTTPHelper.CODE_SUCCESS) {
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getApplicationContext(), R.string.logged_out,
+                                                Toast.LENGTH_LONG).show();
                                     }
-                                }
-                            });
-                        } catch (JSONException e) {
+                                });
+                            } else {
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getApplicationContext(), getString(R.string.error) + " " +
+                                                res.code + ": " +res.message, Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
+                        }catch (IOException e) {
                             e.printStackTrace();
-                        } catch (IOException e) {
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
                 }).start();
-                break;
 
-            case R.id.btn_refresh:
-                updateContactList();
+                Intent logoutIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                logoutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(logoutIntent);
                 break;
+            case R.id.refresh:
+                fetchContacts();
         }
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        // Updating list
-        updateContactList();
+        fetchContacts();
     }
 
-        public void updateContactList () {
-
-            new Thread(new Runnable() {
-                Contact[] contacts_class;
-
-                public void run() {
-                    try {
-                        final JSONArray contacts = httphelper.getContactsFromServer(ContactActivity.this, CONTACTS_URL);
-                        handler.post(new Runnable() {
-                            public void run() {
-                                if (contacts != null) {
-
-                                    JSONObject json_contact;
-                                    contacts_class = new Contact[contacts.length()];
-
-                                    for (int i = 0; i < contacts.length(); i++) {
-                                        try {
-                                            json_contact = contacts.getJSONObject(i);
-                                            contacts_class[i] = new Contact(json_contact.getString("username"));
-                                        } catch (JSONException e1) {
-                                            e1.printStackTrace();
-                                        }
-                                    }
-                                    adapter.update(contacts_class);
-                                }
+    private void fetchContacts() {
+        adapter.clear();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    JSONArray jsonArray = mHTTPHelper.getJSONArrayFromURL(HTTPHelper.URL_CONTACTS, sessionId);
+                    if (jsonArray == null) {
+                        Toast.makeText(ContactActivity.this, R.string.unknown_error, Toast.LENGTH_LONG).show();
+                        Intent loginIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                        loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(loginIntent);
+                    } else {
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            String username = jsonObject.getString(HTTPHelper.USERNAME);
+                            Contact contact = new Contact(username);
+                            if (!username.equals(loggedUser)) {
+                                adapter.addContact(contact);
                             }
-                        });
-                    } catch (JSONException e1) {
-                        e1.printStackTrace();
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
+                        }
                     }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } finally {
+                    mHandler.post(new Runnable(){
+                        public void run() {
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
                 }
-            }).start();
-        }
+            }
+        }).start();
     }
+}

@@ -3,7 +3,6 @@ package jasic.filip.chatapplication.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,9 +17,6 @@ import java.util.Random;
 import jasic.filip.chatapplication.models.Contact;
 import jasic.filip.chatapplication.activities.MessageActivity;
 import jasic.filip.chatapplication.R;
-import jasic.filip.chatapplication.utils.Preferences;
-
-import static android.content.Context.MODE_PRIVATE;
 
 
 public class ContactAdapter extends BaseAdapter implements View.OnClickListener {
@@ -32,25 +28,13 @@ public class ContactAdapter extends BaseAdapter implements View.OnClickListener 
         mContext = context;
         mContacts = new ArrayList<>();
     }
-    public void update(Contact[] contacts) {
-        mContacts.clear();
-        SharedPreferences prefs = mContext.getSharedPreferences(Preferences.NAME, MODE_PRIVATE);
-
-        String loggedin_username = prefs.getString("loggedin_username", null);
-
-        if (contacts != null) {
-            for (Contact contact : contacts){
-                if (!contact.getUsername().equals(loggedin_username))
-                    mContacts.add(contact);
-            }
-        }
-        notifyDataSetChanged();
-    }
 
     public void addContact(Contact Contact) {
         mContacts.add(Contact);
     }
 
+    public void clear() { mContacts.clear();
+    }
     @Override
     public int getCount() {
         return mContacts.size();
@@ -79,27 +63,28 @@ public class ContactAdapter extends BaseAdapter implements View.OnClickListener 
         if(view == null) {
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(
                     Context.LAYOUT_INFLATER_SERVICE);
-
+            assert inflater != null;
             view = inflater.inflate(R.layout.contact_row, null);
             ViewHolder holder = new ViewHolder();
             holder.nameFirst=view.findViewById(R.id.nameFirst);
             holder.image = view.findViewById(R.id.nextImage);
             holder.name = view.findViewById(R.id.name);
             holder.image.setOnClickListener(this);
+            holder.image.setOnClickListener(this);
             view.setTag(holder);
         }
 
         Contact Contact = (Contact) getItem(position);
-        ViewHolder holder = new ViewHolder();
+        ViewHolder holder = (ViewHolder) view.getTag();
 
-        //holder.nameFirst.setText(Contact.getUsername().substring(0,1).toUpperCase());
-        //holder.name.setText(Contact.getUsername());
+        holder.nameFirst.setText(Contact.getUsername().substring(0,1).toUpperCase());
+
+        holder.name.setText(Contact.getUsername());
+
         Random rnd = new Random();
+        holder.nameFirst.setBackgroundColor( Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256)));
 
-      //  holder.nameFirst.setBackgroundColor( Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256)));
-
-        //holder.image.setTag(Contact.getUsername());
-
+        holder.image.setTag(position);
         return view;
     }
 
@@ -113,9 +98,7 @@ public class ContactAdapter extends BaseAdapter implements View.OnClickListener 
 
                 if (view.getId() == R.id.nextImage) {
                     Intent intent = new Intent(mContext.getApplicationContext(), MessageActivity.class);
-                    SharedPreferences.Editor editor = mContext.getSharedPreferences(Preferences.NAME, MODE_PRIVATE).edit();
-                    editor.putString("receiver_username", view.getTag().toString());
-                    editor.apply();
+                    intent.putExtra(Contact.ID, clicked.getUsername());
                     mContext.startActivity(intent);
                 }
                 break;
