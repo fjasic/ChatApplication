@@ -108,24 +108,16 @@ public class ContactAdapter extends BaseAdapter implements View.OnClickListener 
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.nextImage:
-                /*int position = Integer.parseInt(view.getTag().toString());
+                int position = Integer.parseInt(view.getTag().toString());
                 Contact clicked = mContacts.get(position);
 
                 if (view.getId() == R.id.nextImage) {
                     Intent intent = new Intent(mContext.getApplicationContext(), MessageActivity.class);
-                    intent.putExtra(Contact.ID, clicked.getId());
+                    SharedPreferences.Editor editor = mContext.getSharedPreferences(Preferences.NAME, MODE_PRIVATE).edit();
+                    editor.putString("receiver_username", view.getTag().toString());
+                    editor.apply();
                     mContext.startActivity(intent);
-                }*/
-
-                Intent intMessageactivity = new Intent(mContext.getApplicationContext(), MessageActivity.class);
-
-                // Putting receiver userid into SharedPreference file
-                SharedPreferences.Editor editor = mContext.getSharedPreferences(Preferences.NAME, MODE_PRIVATE).edit();
-                editor.putString("receiver_username", view.getTag().toString());
-                editor.apply();
-
-                // Starting message activity
-                mContext.startActivity(intMessageactivity);
+                }
                 break;
         }
     }

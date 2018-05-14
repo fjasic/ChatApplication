@@ -26,7 +26,7 @@ import jasic.filip.chatapplication.providers.ContactProvider;
 import jasic.filip.chatapplication.utils.Preferences;
 
 public class ContactActivity extends Activity implements  View.OnClickListener {
-    private ContactProvider contactProvider;
+  //  private ContactProvider contactProvider;
     private Button logout,refresh;
     private ContactAdapter adapter;
     private String loggedin_username,loggedUserId;
@@ -54,6 +54,7 @@ public class ContactActivity extends Activity implements  View.OnClickListener {
 
         adapter = new ContactAdapter(this);
         list.setAdapter(adapter);
+
         // Contact[] contacts=contactProvider.getContacts();
 
         SharedPreferences sharedPreferences = getSharedPreferences(Preferences.NAME, Context.MODE_PRIVATE);
@@ -64,7 +65,7 @@ public class ContactActivity extends Activity implements  View.OnClickListener {
 
         httphelper =new HttpHelper();
         handler=new Handler();
-    /*    for(Contact contact : contacts){
+        /*for(Contact contact : contacts){
             if (contact.getId() !=loggedUserId){
                 adapter.addContact(contact);
             }
