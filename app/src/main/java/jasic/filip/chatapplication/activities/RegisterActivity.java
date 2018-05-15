@@ -30,10 +30,10 @@ import jasic.filip.chatapplication.helpers.HTTPHelper;
 
 
 public class RegisterActivity extends Activity {
-    private DatePickerDialog.OnDateSetListener dateSetListener;
-    EditText username,password,firstname,lastname,email;
-    TextView displayDate;
-    Button register_back;
+    private DatePickerDialog.OnDateSetListener mDateSetListener;
+    EditText mUsername,mPassword,mFirstname,mLastname,mEmail;
+    TextView mDisplayDate;
+    Button mRegister_back;
     Handler mHandler;
     HTTPHelper mHTTPHelper;
 
@@ -44,13 +44,13 @@ public class RegisterActivity extends Activity {
         mHTTPHelper = new HTTPHelper();
         mHandler = new Handler();
 
-        username =  findViewById(R.id.register_username);
-        password = findViewById(R.id.register_password);
-        email=findViewById(R.id.johndoe);
-        firstname=findViewById(R.id.first_name);
-        lastname=findViewById(R.id.last_name);
-        displayDate=findViewById(R.id.birth_date);
-        register_back=findViewById(R.id.register_page_register_btn);
+        mUsername =  findViewById(R.id.register_username);
+        mPassword = findViewById(R.id.register_password);
+        mEmail=findViewById(R.id.johndoe);
+        mFirstname=findViewById(R.id.first_name);
+        mLastname=findViewById(R.id.last_name);
+        mDisplayDate=findViewById(R.id.birth_date);
+        mRegister_back=findViewById(R.id.register_page_register_btn);
 
 
         Spinner spinner= findViewById(R.id.gender_spinner);
@@ -59,7 +59,7 @@ public class RegisterActivity extends Activity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
-        register_back.setOnClickListener(new View.OnClickListener() {
+        mRegister_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 submitForm();
@@ -69,9 +69,9 @@ public class RegisterActivity extends Activity {
                         public void run() {
                             JSONObject jsonObject = new JSONObject();
                             try {
-                                jsonObject.put(HTTPHelper.USERNAME, username.getText().toString());
-                                jsonObject.put(HTTPHelper.PASSWORD, password.getText().toString());
-                                jsonObject.put(HTTPHelper.EMAIL, email.getText().toString());
+                                jsonObject.put(HTTPHelper.USERNAME, mUsername.getText().toString());
+                                jsonObject.put(HTTPHelper.PASSWORD, mPassword.getText().toString());
+                                jsonObject.put(HTTPHelper.EMAIL, mEmail.getText().toString());
 
                                 final HTTPHelper.HTTPResponse res = mHTTPHelper.postJSONObjectFromURL(HTTPHelper.URL_REGISTER, jsonObject);
 
@@ -103,7 +103,7 @@ public class RegisterActivity extends Activity {
                 }
             }
         });
-        displayDate.setOnClickListener(new View.OnClickListener() {
+        mDisplayDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Calendar cal=Calendar.getInstance();
@@ -111,7 +111,7 @@ public class RegisterActivity extends Activity {
                 int month=cal.get(Calendar.MONTH);
                 int day=cal.get(Calendar.DAY_OF_MONTH);
 
-                DatePickerDialog dialog = new DatePickerDialog(RegisterActivity.this,android.R.style.Theme_Material_Dialog_MinWidth,dateSetListener,
+                DatePickerDialog dialog = new DatePickerDialog(RegisterActivity.this,android.R.style.Theme_Material_Dialog_MinWidth,mDateSetListener,
                         year,month,day);
                 Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialog.getDatePicker().setMaxDate(new Date().getTime());
@@ -119,21 +119,21 @@ public class RegisterActivity extends Activity {
             }
         });
 
-        dateSetListener=new DatePickerDialog.OnDateSetListener() {
+        mDateSetListener=new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 Log.d("dateTest","trenutni datum mm/dd/yyyy"+month +"/" + dayOfMonth + "/" + year);
                 String date=dayOfMonth + "/" + month + "/" + year;
-                displayDate.setText(date);
+                mDisplayDate.setText(date);
             }
         };
 
     }
 
     public boolean validateUsername() {
-        if (username.getText().toString().trim().isEmpty()) {
-            username.setError(getString(R.string.username_error));
-            username.requestFocus();
+        if (mUsername.getText().toString().trim().isEmpty()) {
+            mUsername.setError(getString(R.string.username_error));
+            mUsername.requestFocus();
             return false;
         } else {
             return true;
@@ -142,9 +142,9 @@ public class RegisterActivity extends Activity {
     }
 
     public boolean validatePassword() {
-        if (password.getText().toString().trim().length() < 6) {
-            password.setError(getString(R.string.password_6_error));
-            password.requestFocus();
+        if (mPassword.getText().toString().trim().length() < 6) {
+            mPassword.setError(getString(R.string.password_6_error));
+            mPassword.requestFocus();
             return false;
         } else {
             return true;
@@ -153,9 +153,9 @@ public class RegisterActivity extends Activity {
     }
 
     public boolean validateEmail() {
-        if (email.getText().toString().trim().isEmpty()) {
-            email.setError(getString(R.string.email_error));
-            email.requestFocus();
+        if (mEmail.getText().toString().trim().isEmpty()) {
+            mEmail.setError(getString(R.string.email_error));
+            mEmail.requestFocus();
             return false;
         } else {
             return true;

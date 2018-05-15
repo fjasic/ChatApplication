@@ -1,5 +1,7 @@
 package jasic.filip.chatapplication.helpers;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,7 +26,6 @@ public class HTTPHelper {
     public static final String SENDER = "sender";
     public static final String RECEIVER = "receiver";
     public static final String DATA = "data";
-
     public static final String URL_SERVER = "http://18.205.194.168:80";
     public static final String URL_LOGIN = URL_SERVER + "/login";
     public static final String URL_REGISTER = URL_SERVER + "/register";
@@ -59,6 +60,7 @@ public class HTTPHelper {
         String jsonString = sb.toString();
 
         int responseCode =  urlConnection.getResponseCode();
+
         urlConnection.disconnect();
         return responseCode == CODE_SUCCESS ? new JSONArray(jsonString) : null;
     }
@@ -91,6 +93,9 @@ public class HTTPHelper {
         res.code =  urlConnection.getResponseCode();
         res.message = urlConnection.getResponseMessage();
         res.sessionId = urlConnection.getHeaderField(SESSION_ID);
+
+        Log.i("STATUS", String.valueOf(urlConnection.getResponseCode()));
+        Log.i("LOGIN-USER" , urlConnection.getResponseMessage());
 
         urlConnection.disconnect();
         return res;
@@ -125,6 +130,9 @@ public class HTTPHelper {
         res.code =  urlConnection.getResponseCode();
         res.message = urlConnection.getResponseMessage();
         res.sessionId = urlConnection.getHeaderField(SESSION_ID);
+
+        Log.i("STATUS", String.valueOf(urlConnection.getResponseCode()));
+        Log.i("LOGOUT-USER" , urlConnection.getResponseMessage());
 
         urlConnection.disconnect();
         return res;

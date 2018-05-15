@@ -24,12 +24,12 @@ import jasic.filip.chatapplication.adapters.ContactAdapter;
 import jasic.filip.chatapplication.utils.Preferences;
 
 public class ContactActivity extends Activity implements View.OnClickListener {
-    private Button logout,refresh;
-    private ListView list;
+    private Button mLogout,mRefresh;
+    private ListView mList;
     HTTPHelper mHTTPHelper;
     Handler mHandler;
     String sessionId,loggedUser;
-    ContactAdapter adapter;
+    ContactAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,14 +39,14 @@ public class ContactActivity extends Activity implements View.OnClickListener {
         mHTTPHelper = new HTTPHelper();
         mHandler = new Handler();
 
-        logout=findViewById(R.id.logout_list);
-        list= findViewById(R.id.list);
-        refresh=findViewById(R.id.refresh);
+        mLogout=findViewById(R.id.logout_list);
+        mList= findViewById(R.id.list);
+        mRefresh=findViewById(R.id.refresh);
 
-        logout.setOnClickListener(this);
-        refresh.setOnClickListener(this);
+        mLogout.setOnClickListener(this);
+        mRefresh.setOnClickListener(this);
 
-        adapter=new ContactAdapter(this);
+        mAdapter=new ContactAdapter(this);
 
         SharedPreferences sharedPreferences=getSharedPreferences(Preferences.NAME, Context.MODE_PRIVATE);
         sessionId=sharedPreferences.getString(Preferences.SESSION_ID,null);
@@ -59,7 +59,7 @@ public class ContactActivity extends Activity implements View.OnClickListener {
             startActivity(loginIntent);
         }
 
-        list.setAdapter(adapter);
+        mList.setAdapter(mAdapter);
 
     }
 
@@ -97,9 +97,9 @@ public class ContactActivity extends Activity implements View.OnClickListener {
                     }
                 }).start();
 
-                Intent logoutIntent = new Intent(getApplicationContext(), LoginActivity.class);
-                logoutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(logoutIntent);
+                Intent mLogoutIntent = new Intent(getApplicationContext(), LoginActivity.class);
+                mLogoutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(mLogoutIntent);
                 break;
             case R.id.refresh:
                 fetchContacts();
@@ -114,7 +114,7 @@ public class ContactActivity extends Activity implements View.OnClickListener {
     }
 
     private void fetchContacts() {
-        adapter.clear();
+        mAdapter.clear();
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -131,7 +131,7 @@ public class ContactActivity extends Activity implements View.OnClickListener {
                             String username = jsonObject.getString(HTTPHelper.USERNAME);
                             Contact contact = new Contact(username);
                             if (!username.equals(loggedUser)) {
-                                adapter.addContact(contact);
+                                mAdapter.addContact(contact);
                             }
                         }
                     }
@@ -142,7 +142,7 @@ public class ContactActivity extends Activity implements View.OnClickListener {
                 } finally {
                     mHandler.post(new Runnable(){
                         public void run() {
-                            adapter.notifyDataSetChanged();
+                            mAdapter.notifyDataSetChanged();
                         }
                     });
                 }

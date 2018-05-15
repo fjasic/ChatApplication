@@ -23,8 +23,8 @@ import jasic.filip.chatapplication.models.Contact;
 import jasic.filip.chatapplication.utils.Preferences;
 
 public class LoginActivity extends Activity implements  View.OnClickListener{
-    Button login,register;
-    EditText username,password;
+    Button mLogin,mRegister;
+    EditText mUsername,mPassword;
     Handler mHandler;
     HTTPHelper mHTTPHelper;
     @Override
@@ -34,13 +34,14 @@ public class LoginActivity extends Activity implements  View.OnClickListener{
 
         mHandler = new Handler();
         mHTTPHelper = new HTTPHelper();
-        login = findViewById(R.id.login_button);
-        register = findViewById(R.id.register_button);
-        username =  findViewById(R.id.username_text);
-        password =  findViewById(R.id.password_text);
 
-        login.setOnClickListener(this);
-        register.setOnClickListener(this);
+        mLogin = findViewById(R.id.login_button);
+        mRegister = findViewById(R.id.register_button);
+        mUsername =  findViewById(R.id.username_text);
+        mPassword =  findViewById(R.id.password_text);
+
+        mLogin.setOnClickListener(this);
+        mRegister.setOnClickListener(this);
 
     }
 
@@ -58,8 +59,8 @@ public class LoginActivity extends Activity implements  View.OnClickListener{
                         public void run() {
                             JSONObject jsonObject = new JSONObject();
                             try {
-                                jsonObject.put(HTTPHelper.USERNAME, username.getText().toString());
-                                jsonObject.put(HTTPHelper.PASSWORD, password.getText().toString());
+                                jsonObject.put(HTTPHelper.USERNAME, mUsername.getText().toString());
+                                jsonObject.put(HTTPHelper.PASSWORD, mPassword.getText().toString());
 
                                 final HTTPHelper.HTTPResponse res = mHTTPHelper.postJSONObjectFromURL(HTTPHelper.URL_LOGIN, jsonObject);
 
@@ -71,7 +72,7 @@ public class LoginActivity extends Activity implements  View.OnClickListener{
 
                                             SharedPreferences.Editor editor = getSharedPreferences(Preferences.NAME, Context.MODE_PRIVATE).edit();
                                             editor.putString(Preferences.SESSION_ID, res.sessionId);
-                                            editor.putString(Preferences.USER_LOGGED_IN, username.getText().toString());
+                                            editor.putString(Preferences.USER_LOGGED_IN, mUsername.getText().toString());
                                             editor.apply();
 
                                             startActivity(contactsIntent);
@@ -101,9 +102,9 @@ public class LoginActivity extends Activity implements  View.OnClickListener{
     }
 
     private boolean validateUsername() {
-        if (username.getText().toString().trim().isEmpty()) {
-            username.setError(getString(R.string.username_error));
-            username.requestFocus();
+        if (mUsername.getText().toString().trim().isEmpty()) {
+            mUsername.setError(getString(R.string.username_error));
+            mUsername.requestFocus();
             return false;
         } else {
             return true;
@@ -111,9 +112,9 @@ public class LoginActivity extends Activity implements  View.OnClickListener{
     }
 
     private boolean validatePassword() {
-        if (password.getText().toString().trim().length() < 6) {
-            password.setError(getString(R.string.password_6_error));
-            password.requestFocus();
+        if (mPassword.getText().toString().trim().length() < 6) {
+            mPassword.setError(getString(R.string.password_6_error));
+            mPassword.requestFocus();
             return false;
         } else {
             return true;

@@ -35,7 +35,7 @@ public class MessageActivity extends Activity implements View.OnClickListener, T
     private MessageAdapter mMessageAdapter;
     private TextView mContactName;
     private String mSender;
-    ListView messages;
+    ListView mMessages;
     HTTPHelper mHTTPHelper;
     String mSessionID;
     Handler mHandler;
@@ -53,7 +53,7 @@ public class MessageActivity extends Activity implements View.OnClickListener, T
         mButtonRefresh=findViewById(R.id.refresh_msg);
         mMessage = findViewById(R.id.msg);
         mContactName = findViewById(R.id.chatName);
-        messages = findViewById(R.id.listMessage);
+        mMessages = findViewById(R.id.listMessage);
         mSender = getIntent().getStringExtra(Contact.ID);
 
         mContactName.setText(mSender);
@@ -64,10 +64,11 @@ public class MessageActivity extends Activity implements View.OnClickListener, T
 
         mButtonSend.setOnClickListener(this);
         mButtonLogout.setOnClickListener(this);
+        mButtonRefresh.setOnClickListener(this);
 
         mMessageAdapter = new MessageAdapter(this);
 
-        messages.setAdapter(mMessageAdapter);
+        mMessages.setAdapter(mMessageAdapter);
 
     }
 
@@ -179,13 +180,13 @@ public class MessageActivity extends Activity implements View.OnClickListener, T
                     e.printStackTrace();
                 } catch (JSONException e) {
                     e.printStackTrace();
-                } /*finally {
+                } finally {
                     mHandler.post(new Runnable(){
                         public void run() {
                             mMessageAdapter.notifyDataSetChanged();
                         }
                     });
-                }*/
+                }
             }
         }).start();
     }
