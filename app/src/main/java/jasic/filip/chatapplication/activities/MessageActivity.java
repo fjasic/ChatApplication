@@ -1,11 +1,14 @@
 package jasic.filip.chatapplication.activities;
 
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.NotificationCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -21,6 +24,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import jasic.filip.chatapplication.NotificationService;
 import jasic.filip.chatapplication.R;
 import jasic.filip.chatapplication.adapters.MessageAdapter;
 import jasic.filip.chatapplication.helpers.HTTPHelper;
@@ -40,6 +44,8 @@ public class MessageActivity extends Activity implements View.OnClickListener, T
     String mSessionID;
     Handler mHandler;
 
+    NotificationCompat.Builder notification;
+    private static final int uniqueID=31232;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +53,6 @@ public class MessageActivity extends Activity implements View.OnClickListener, T
 
         mHTTPHelper = new HTTPHelper();
         mHandler = new Handler();
-
         mButtonLogout = findViewById(R.id.logout_message);
         mButtonSend = findViewById(R.id.send_button);
         mButtonRefresh=findViewById(R.id.refresh_msg);
@@ -69,8 +74,11 @@ public class MessageActivity extends Activity implements View.OnClickListener, T
         mMessageAdapter = new MessageAdapter(this);
 
         mMessages.setAdapter(mMessageAdapter);
-
+        notification = new NotificationCompat.Builder(this);
+        notification.setAutoCancel(true);
     }
+
+
 
     @Override
     public void onResume() {
@@ -82,6 +90,7 @@ public class MessageActivity extends Activity implements View.OnClickListener, T
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.logout_message:
+                stopService(new Intent(MessageActivity.this, NotificationService.class));
                 Intent logoutIntent = new Intent(getApplicationContext(), LoginActivity.class);
                 logoutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(logoutIntent);

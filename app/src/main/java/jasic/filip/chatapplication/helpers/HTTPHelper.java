@@ -1,7 +1,7 @@
 package jasic.filip.chatapplication.helpers;
 
+import android.content.Context;
 import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+
 
 public class HTTPHelper {
 
@@ -33,6 +35,7 @@ public class HTTPHelper {
     public static final String URL_MESSAGES = URL_SERVER + "/message/";
     public static final String URL_MESSAGE_SEND = URL_SERVER + "/message";
     public static final String URL_LOGOUT = URL_SERVER + "/logout";
+    public static final String GET_NOTIFICATION_URL = URL_SERVER  + "/getfromservice";
 
 
     public JSONArray getJSONArrayFromURL(String urlString, String sessionID) throws IOException, JSONException {
@@ -136,6 +139,40 @@ public class HTTPHelper {
 
         urlConnection.disconnect();
         return res;
+    }
+
+    /*HTTP getNotification*/
+    public boolean getNotification(Context context) throws IOException, JSONException {
+        HttpURLConnection urlConnection = null;
+        java.net.URL url = new URL(GET_NOTIFICATION_URL);
+        urlConnection = (HttpURLConnection) url.openConnection();
+
+        urlConnection.setRequestMethod("GET");
+        urlConnection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+        urlConnection.setRequestProperty("Accept","application/json");
+        urlConnection.setConnectTimeout(15000);
+        urlConnection.setReadTimeout(1000);
+
+        try {
+            urlConnection.connect();
+        } catch (IOException e) {
+            return false;
+        }
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+        StringBuilder sb = new StringBuilder();
+
+        String line;
+        while ((line = br.readLine()) != null) {
+            sb.append(line);
+        }
+
+        br.close();
+
+        Boolean response = Boolean.valueOf(sb.toString());
+
+        urlConnection.disconnect();
+        return (response);
     }
 
     public class HTTPResponse {

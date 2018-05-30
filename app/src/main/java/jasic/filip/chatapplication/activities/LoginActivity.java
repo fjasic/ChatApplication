@@ -17,6 +17,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import jasic.filip.chatapplication.NotificationService;
 import jasic.filip.chatapplication.R;
 import jasic.filip.chatapplication.helpers.HTTPHelper;
 import jasic.filip.chatapplication.models.Contact;
@@ -43,6 +44,7 @@ public class LoginActivity extends Activity implements  View.OnClickListener{
         mLogin.setOnClickListener(this);
         mRegister.setOnClickListener(this);
 
+
     }
 
     @Override
@@ -63,7 +65,6 @@ public class LoginActivity extends Activity implements  View.OnClickListener{
                                 jsonObject.put(HTTPHelper.PASSWORD, mPassword.getText().toString());
 
                                 final HTTPHelper.HTTPResponse res = mHTTPHelper.postJSONObjectFromURL(HTTPHelper.URL_LOGIN, jsonObject);
-
                                 mHandler.post(new Runnable(){
                                     public void run() {
                                         if (res.code == HTTPHelper.CODE_SUCCESS) {
@@ -74,7 +75,7 @@ public class LoginActivity extends Activity implements  View.OnClickListener{
                                             editor.putString(Preferences.SESSION_ID, res.sessionId);
                                             editor.putString(Preferences.USER_LOGGED_IN, mUsername.getText().toString());
                                             editor.apply();
-
+                                            startService(new Intent(LoginActivity.this, NotificationService.class));
                                             startActivity(contactsIntent);
                                         } else if (res.code == HTTPHelper.CODE_INVALID_USER_PASS) {
                                             Toast.makeText(LoginActivity.this, R.string.wrong_user_pass,
@@ -97,6 +98,7 @@ public class LoginActivity extends Activity implements  View.OnClickListener{
                 break;
         }
     }
+
     private boolean submitForm() {
         return validateUsername() && validatePassword();
     }

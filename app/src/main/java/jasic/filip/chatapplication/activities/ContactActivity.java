@@ -17,6 +17,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import jasic.filip.chatapplication.NotificationService;
 import jasic.filip.chatapplication.helpers.HTTPHelper;
 import jasic.filip.chatapplication.models.Contact;
 import jasic.filip.chatapplication.R;
@@ -97,6 +98,7 @@ public class ContactActivity extends Activity implements View.OnClickListener {
                     }
                 }).start();
 
+                stopService(new Intent(ContactActivity.this, NotificationService.class));
                 Intent mLogoutIntent = new Intent(getApplicationContext(), LoginActivity.class);
                 mLogoutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(mLogoutIntent);
