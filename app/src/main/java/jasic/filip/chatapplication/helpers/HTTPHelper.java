@@ -145,39 +145,36 @@ public class HTTPHelper {
 
 
     /*HTTP boolean notification for unread messages*/
-    public boolean getUnreadMessageBool(String urlString, String sessionID) throws IOException, JSONException{
-        HttpURLConnection urlConnection ;
-        java.net.URL url = new URL(urlString);
+    public boolean getBooleanFromURL(String urlString, String sessionID) throws IOException, JSONException {
+        HttpURLConnection urlConnection = null;
+        java.net.URL url = new URL(NOTIFICATION_URL);
         urlConnection = (HttpURLConnection) url.openConnection();
-        HTTPResponse res = new HTTPResponse();
 
         urlConnection.setRequestMethod("GET");
-        urlConnection.setRequestProperty(SESSION_ID, sessionID);
-        urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
         urlConnection.setRequestProperty("Accept", "application/json");
-
+        urlConnection.setReadTimeout(10000);
+        urlConnection.setConnectTimeout(15000);
+        urlConnection.setRequestProperty(SESSION_ID, sessionID);
         try {
             urlConnection.connect();
         } catch (IOException e) {
-            res.code = 404;
-            res.message = "Server unreachable";
             return false;
         }
+
         BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
         StringBuilder sb = new StringBuilder();
 
         String line;
         while ((line = br.readLine()) != null) {
-            sb.append(line + "\n");
+            sb.append(line);
         }
+
         br.close();
 
-        boolean responseCode =  Boolean.valueOf(sb.toString());
+        boolean response = Boolean.valueOf(sb.toString());
 
         urlConnection.disconnect();
-        return (responseCode);
-
-
+        return response;
     }
 
     /* Contains server response data (Code, Message and header field sessionID)*/

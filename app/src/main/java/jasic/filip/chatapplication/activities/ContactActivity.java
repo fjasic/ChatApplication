@@ -27,6 +27,7 @@ import java.io.IOException;
 
 import jasic.filip.chatapplication.INotificationBinder;
 import jasic.filip.chatapplication.INotificationCallback;
+import jasic.filip.chatapplication.NotificationBinder;
 import jasic.filip.chatapplication.NotificationService;
 import jasic.filip.chatapplication.helpers.HTTPHelper;
 import jasic.filip.chatapplication.models.Contact;
@@ -127,15 +128,6 @@ public class ContactActivity extends Activity implements View.OnClickListener,Se
         fetchContacts();
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        if (mService != null) {
-            unbindService(this);
-        }
-    }
-
     private void fetchContacts() {
         mAdapter.clear();
         new Thread(new Runnable() {
@@ -174,8 +166,8 @@ public class ContactActivity extends Activity implements View.OnClickListener,Se
     }
 
     @Override
-    public void onServiceConnected(ComponentName name, IBinder iBinder) {
-        mService = INotificationBinder.Stub.asInterface(iBinder);
+    public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+        mService = (NotificationBinder) NotificationBinder.Stub.asInterface(iBinder);
         try {
             mService.setCallback(new NotificationCallback());
         } catch (RemoteException e) {
@@ -183,8 +175,8 @@ public class ContactActivity extends Activity implements View.OnClickListener,Se
     }
 
     @Override
-    public void onServiceDisconnected(ComponentName name) {
-            mService = null;
+    public void onServiceDisconnected(ComponentName componentName) {
+
     }
 
     private class NotificationCallback extends INotificationCallback.Stub {
@@ -192,41 +184,38 @@ public class ContactActivity extends Activity implements View.OnClickListener,Se
         @Override
         public void onCallbackCall() throws RemoteException {
 
+            final HTTPHelper mHTTPHelper = new HTTPHelper();
+            final Handler handler = new Handler();
 
-            final NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(), null)
-                    .setContentText("New message!")
+            final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext(), null)
                     .setSmallIcon(R.drawable.sendbutton)
-                    .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.sendbutton))
-                    .setContentTitle("Chat application")
+                    .setContentTitle(getText(R.string.app_name))
+                    .setContentText(getString(R.string.have_new_message))
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
             final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
 
 
             new Thread(new Runnable() {
-                @Override
                 public void run() {
                     try {
-                        final boolean response = mHTTPHelper.getUnreadMessageBool(HTTPHelper.NOTIFICATION_URL,sessionId);
-                        mHandler.post(new Runnable() {
-                            @Override
+                        final boolean res = mHTTPHelper.getBooleanFromURL(HTTPHelper.NOTIFICATION_URL, sessionId);
+
+                        handler.post(new Runnable() {
                             public void run() {
-                                if(response){
-                                    notificationManager.notify(919503, notificationBuilder.build());
-                                }else{
-                                    Log.d("ERROR","getfromservice");
+                                if (res) {
+                                    notificationManager.notify(2, mBuilder.build());
                                 }
                             }
                         });
-                    } catch (IOException e){
+                    } catch (IOException e) {
                         e.printStackTrace();
-                    } catch (JSONException e){
+                    } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
             }).start();
-
-        }
         }
     }
+}
 
