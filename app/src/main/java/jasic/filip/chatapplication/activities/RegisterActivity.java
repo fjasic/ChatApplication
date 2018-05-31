@@ -39,7 +39,7 @@ public class RegisterActivity extends Activity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main2);
+        setContentView(R.layout.register);
 
         mHTTPHelper = new HTTPHelper();
         mHandler = new Handler();

@@ -22,8 +22,7 @@ public class NotificationBinder extends INotificationBinder.Stub {
 
     private class CallbackCaller implements Runnable {
 
-        private static final long PERIOD = 5000L;
-
+        private static final long PERIOD = 5000;
         private Handler mHandler = null;
         private boolean mRun = true;
 
@@ -39,18 +38,20 @@ public class NotificationBinder extends INotificationBinder.Stub {
 
         @Override
         public void run() {
-            if (!mRun) {
+            if (mRun) {
+
+                try {
+                    mCallback.onCallbackCall();
+                } catch (NullPointerException e) {
+
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+
+                mHandler.postDelayed(this, PERIOD);
+            }else{
                 return;
             }
-
-            try {
-                mCallback.onCallbackCall();
-            } catch (NullPointerException e) {
-                // callback is null, do nothing
-            } catch (RemoteException e) {
-            }
-
-            mHandler.postDelayed(this, PERIOD);
         }
     }
 }

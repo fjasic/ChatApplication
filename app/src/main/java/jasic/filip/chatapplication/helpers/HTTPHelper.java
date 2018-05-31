@@ -1,6 +1,5 @@
 package jasic.filip.chatapplication.helpers;
 
-import android.content.Context;
 import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -12,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
 
 
 public class HTTPHelper {
@@ -35,9 +33,10 @@ public class HTTPHelper {
     public static final String URL_MESSAGES = URL_SERVER + "/message/";
     public static final String URL_MESSAGE_SEND = URL_SERVER + "/message";
     public static final String URL_LOGOUT = URL_SERVER + "/logout";
-    public static final String GET_NOTIFICATION_URL = URL_SERVER  + "/getfromservice";
+    public static final String NOTIFICATION_URL = URL_SERVER  + "/getfromservice";
 
 
+    /*HTTP get json Array -> for contact list and message list */
     public JSONArray getJSONArrayFromURL(String urlString, String sessionID) throws IOException, JSONException {
         HttpURLConnection urlConnection ;
         java.net.URL url = new URL(urlString);
@@ -67,11 +66,12 @@ public class HTTPHelper {
         urlConnection.disconnect();
         return responseCode == CODE_SUCCESS ? new JSONArray(jsonString) : null;
     }
-
+    /*HTTP post (without sessionID) -> for register and login */
     public HTTPResponse postJSONObjectFromURL(String urlString, JSONObject jsonObject) throws IOException, JSONException {
         HttpURLConnection urlConnection ;
         HTTPResponse res = new HTTPResponse();
         java.net.URL url = new URL(urlString);
+
         urlConnection = (HttpURLConnection) url.openConnection();
         urlConnection.setRequestMethod("POST");
         urlConnection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
@@ -104,10 +104,12 @@ public class HTTPHelper {
         return res;
     }
 
+    /*HTTP post (with sessionID) -> for sending a message and logging out */
     public HTTPResponse postJSONObjectFromURL(String urlString, JSONObject jsonObject, String sessionID) throws IOException, JSONException {
         HttpURLConnection urlConnection ;
         HTTPResponse res = new HTTPResponse();
         java.net.URL url = new URL(urlString);
+
         urlConnection = (HttpURLConnection) url.openConnection();
         urlConnection.setRequestMethod("POST");
         urlConnection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
@@ -141,40 +143,44 @@ public class HTTPHelper {
         return res;
     }
 
-    /*HTTP getNotification*/
-    public boolean getNotification(Context context) throws IOException, JSONException {
-        HttpURLConnection urlConnection = null;
-        java.net.URL url = new URL(GET_NOTIFICATION_URL);
+
+    /*HTTP boolean notification for unread messages*/
+    public boolean getUnreadMessageBool(String urlString, String sessionID) throws IOException, JSONException{
+        HttpURLConnection urlConnection ;
+        java.net.URL url = new URL(urlString);
         urlConnection = (HttpURLConnection) url.openConnection();
+        HTTPResponse res = new HTTPResponse();
 
         urlConnection.setRequestMethod("GET");
-        urlConnection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
-        urlConnection.setRequestProperty("Accept","application/json");
-        urlConnection.setConnectTimeout(15000);
-        urlConnection.setReadTimeout(1000);
+        urlConnection.setRequestProperty(SESSION_ID, sessionID);
+        urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+        urlConnection.setRequestProperty("Accept", "application/json");
 
         try {
             urlConnection.connect();
         } catch (IOException e) {
+            res.code = 404;
+            res.message = "Server unreachable";
             return false;
         }
-
         BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
         StringBuilder sb = new StringBuilder();
 
         String line;
         while ((line = br.readLine()) != null) {
-            sb.append(line);
+            sb.append(line + "\n");
         }
-
         br.close();
 
-        Boolean response = Boolean.valueOf(sb.toString());
+        boolean responseCode =  Boolean.valueOf(sb.toString());
 
         urlConnection.disconnect();
-        return (response);
+        return (responseCode);
+
+
     }
 
+    /* Contains server response data (Code, Message and header field sessionID)*/
     public class HTTPResponse {
         public int code;
         public String message;

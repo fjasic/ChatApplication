@@ -1,11 +1,19 @@
 package jasic.filip.chatapplication.activities;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
+import android.os.RemoteException;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -17,6 +25,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import jasic.filip.chatapplication.INotificationBinder;
+import jasic.filip.chatapplication.INotificationCallback;
 import jasic.filip.chatapplication.NotificationService;
 import jasic.filip.chatapplication.helpers.HTTPHelper;
 import jasic.filip.chatapplication.models.Contact;
@@ -24,7 +34,7 @@ import jasic.filip.chatapplication.R;
 import jasic.filip.chatapplication.adapters.ContactAdapter;
 import jasic.filip.chatapplication.utils.Preferences;
 
-public class ContactActivity extends Activity implements View.OnClickListener {
+public class ContactActivity extends Activity implements View.OnClickListener,ServiceConnection {
     private Button mLogout,mRefresh;
     private ListView mList;
     HTTPHelper mHTTPHelper;
@@ -32,10 +42,11 @@ public class ContactActivity extends Activity implements View.OnClickListener {
     String sessionId,loggedUser;
     ContactAdapter mAdapter;
 
+    private INotificationBinder mService=null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main3);
+        setContentView(R.layout.contacts);
 
         mHTTPHelper = new HTTPHelper();
         mHandler = new Handler();
@@ -61,6 +72,8 @@ public class ContactActivity extends Activity implements View.OnClickListener {
         }
 
         mList.setAdapter(mAdapter);
+
+        bindService(new Intent(ContactActivity.this,NotificationService.class), this,Context.BIND_AUTO_CREATE);
 
     }
 
@@ -98,7 +111,6 @@ public class ContactActivity extends Activity implements View.OnClickListener {
                     }
                 }).start();
 
-                stopService(new Intent(ContactActivity.this, NotificationService.class));
                 Intent mLogoutIntent = new Intent(getApplicationContext(), LoginActivity.class);
                 mLogoutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(mLogoutIntent);
@@ -113,6 +125,15 @@ public class ContactActivity extends Activity implements View.OnClickListener {
     protected void onResume() {
         super.onResume();
         fetchContacts();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (mService != null) {
+            unbindService(this);
+        }
     }
 
     private void fetchContacts() {
@@ -151,4 +172,61 @@ public class ContactActivity extends Activity implements View.OnClickListener {
             }
         }).start();
     }
-}
+
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder iBinder) {
+        mService = INotificationBinder.Stub.asInterface(iBinder);
+        try {
+            mService.setCallback(new NotificationCallback());
+        } catch (RemoteException e) {
+        }
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+            mService = null;
+    }
+
+    private class NotificationCallback extends INotificationCallback.Stub {
+
+        @Override
+        public void onCallbackCall() throws RemoteException {
+
+
+            final NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(), null)
+                    .setContentText("New message!")
+                    .setSmallIcon(R.drawable.sendbutton)
+                    .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.sendbutton))
+                    .setContentTitle("Chat application")
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+            final NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        final boolean response = mHTTPHelper.getUnreadMessageBool(HTTPHelper.NOTIFICATION_URL,sessionId);
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(response){
+                                    notificationManager.notify(919503, notificationBuilder.build());
+                                }else{
+                                    Log.d("ERROR","getfromservice");
+                                }
+                            }
+                        });
+                    } catch (IOException e){
+                        e.printStackTrace();
+                    } catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+
+        }
+        }
+    }
+

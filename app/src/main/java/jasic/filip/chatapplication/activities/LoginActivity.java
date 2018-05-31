@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -20,7 +19,6 @@ import java.io.IOException;
 import jasic.filip.chatapplication.NotificationService;
 import jasic.filip.chatapplication.R;
 import jasic.filip.chatapplication.helpers.HTTPHelper;
-import jasic.filip.chatapplication.models.Contact;
 import jasic.filip.chatapplication.utils.Preferences;
 
 public class LoginActivity extends Activity implements  View.OnClickListener{
@@ -31,7 +29,7 @@ public class LoginActivity extends Activity implements  View.OnClickListener{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.login);
 
         mHandler = new Handler();
         mHTTPHelper = new HTTPHelper();
@@ -45,6 +43,17 @@ public class LoginActivity extends Activity implements  View.OnClickListener{
         mRegister.setOnClickListener(this);
 
 
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startService(new Intent(this, NotificationService.class));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopService(new Intent(this, NotificationService.class));
     }
 
     @Override
@@ -75,7 +84,6 @@ public class LoginActivity extends Activity implements  View.OnClickListener{
                                             editor.putString(Preferences.SESSION_ID, res.sessionId);
                                             editor.putString(Preferences.USER_LOGGED_IN, mUsername.getText().toString());
                                             editor.apply();
-                                            startService(new Intent(LoginActivity.this, NotificationService.class));
                                             startActivity(contactsIntent);
                                         } else if (res.code == HTTPHelper.CODE_INVALID_USER_PASS) {
                                             Toast.makeText(LoginActivity.this, R.string.wrong_user_pass,

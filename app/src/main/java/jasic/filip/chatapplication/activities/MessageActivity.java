@@ -1,8 +1,6 @@
 package jasic.filip.chatapplication.activities;
 
 import android.app.Activity;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -24,7 +22,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-import jasic.filip.chatapplication.NotificationService;
 import jasic.filip.chatapplication.R;
 import jasic.filip.chatapplication.adapters.MessageAdapter;
 import jasic.filip.chatapplication.helpers.HTTPHelper;
@@ -49,7 +46,7 @@ public class MessageActivity extends Activity implements View.OnClickListener, T
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main4);
+        setContentView(R.layout.messages);
 
         mHTTPHelper = new HTTPHelper();
         mHandler = new Handler();
@@ -90,7 +87,6 @@ public class MessageActivity extends Activity implements View.OnClickListener, T
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.logout_message:
-                stopService(new Intent(MessageActivity.this, NotificationService.class));
                 Intent logoutIntent = new Intent(getApplicationContext(), LoginActivity.class);
                 logoutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(logoutIntent);
