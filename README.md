@@ -4,3 +4,4 @@ Materijali za predmet [PNRS1](http://www.rt-rk.uns.ac.rs/predmeti/e2/pnrs-1-proj
 - Resenje za prva [3 zadatka](https://github.com/fjasic/ChatApplication/releases/tag/v0.3) 
 - Resenje za [cetvrti zadatak](https://github.com/fjasic/ChatApplication/releases/tag/v0.4)
 - Resenje za [peti zadatak](https://github.com/fjasic/ChatApplication/releases/tag/v0.5)
+- Resenje za [sesti zadatak](https://github.com/fjasic/ChatApplication/releases/tag/v0.6)

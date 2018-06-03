@@ -22,6 +22,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import jasic.filip.chatapplication.Encryption;
 import jasic.filip.chatapplication.R;
 import jasic.filip.chatapplication.adapters.MessageAdapter;
 import jasic.filip.chatapplication.helpers.HTTPHelper;
@@ -40,9 +41,9 @@ public class MessageActivity extends Activity implements View.OnClickListener, T
     HTTPHelper mHTTPHelper;
     String mSessionID;
     Handler mHandler;
+    Encryption mEncryption;
 
     NotificationCompat.Builder notification;
-    private static final int uniqueID=31232;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +51,7 @@ public class MessageActivity extends Activity implements View.OnClickListener, T
 
         mHTTPHelper = new HTTPHelper();
         mHandler = new Handler();
+        mEncryption=new Encryption();
         mButtonLogout = findViewById(R.id.logout_message);
         mButtonSend = findViewById(R.id.send_button);
         mButtonRefresh=findViewById(R.id.refresh_msg);
@@ -98,7 +100,7 @@ public class MessageActivity extends Activity implements View.OnClickListener, T
                         try {
                             JSONObject jsonObject = new JSONObject();
                             jsonObject.put(HTTPHelper.RECEIVER, mSender);
-                            jsonObject.put(HTTPHelper.DATA, mMessage.getText().toString());
+                            jsonObject.put(HTTPHelper.DATA, mEncryption.encrypt(mMessage.getText().toString(), mEncryption.KEY));//ENKRIPTOVANJE
                             final HTTPHelper.HTTPResponse response = mHTTPHelper.postJSONObjectFromURL(HTTPHelper.URL_MESSAGE_SEND, jsonObject, mSessionID);
 
                             if (response.code != HTTPHelper.CODE_SUCCESS) {
@@ -176,7 +178,7 @@ public class MessageActivity extends Activity implements View.OnClickListener, T
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
                             String sender = jsonObject.getString(HTTPHelper.SENDER);
-                            String data = jsonObject.getString(HTTPHelper.DATA);
+                            String data = mEncryption.decrypt(jsonObject.getString(HTTPHelper.DATA), Encryption.KEY); //DEKRIPTOVANJE
                             Message message = new Message(data, sender.compareTo(mSender) == 0);
                             mMessageAdapter.addMessage(message);
                         }
